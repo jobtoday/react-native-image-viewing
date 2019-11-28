@@ -1,0 +1,45 @@
+{
+  "name": "react-native-image-viewing",
+  "version": "0.0.6",
+  "description": "React Native modal component for viewing images as a sliding gallery",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jobtoday/react-native-image-viewing.git"
+  },
+  "keywords": [
+    "react",
+    "react-native",
+    "image",
+    "gallery",
+    "image-gallery",
+    "image-viewer"
+  ],
+  "scripts": {
+    "build": "tsc"
+  },
+  "peerDependencies": {
+    "react": ">=16.11.0",
+    "react-native": ">=0.61.3"
+  },
+  "files": [
+    "dist",
+    "readme.md",
+    "package.json"
+  ],
+  "author": "Anton Kalinin",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jobtoday/react-native-image-viewing/issues"
+  },
+  "homepage": "https://github.com/jobtoday/react-native-image-viewing#readme",
+  "devDependencies": {
+    "@babel/runtime": "7.5.5",
+    "@types/react": "16.9.2",
+    "@types/react-native": "0.60.22",
+    "react": "16.11.0",
+    "react-native": "0.61.3",
+    "typescript": "3.7.2"
+  }
+}
