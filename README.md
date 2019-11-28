@@ -1,10 +1,15 @@
 # react-native-image-viewing
 
+> React Native modal component for viewing images as a sliding gallery.
+
 [![npm version](https://badge.fury.io/js/react-native-image-viewing.svg)](https://badge.fury.io/js/react-native-image-viewing)
 [![styled with prettier](https://img.shields.io/badge/styled_with-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
 
-React Native modal component for viewing images as a sliding gallery.
-Supports swipe-to-close animation, custom header and footer components.
+- 🔥Supports swipe-to-close animation
+- 🔥Custom header and footer components
+- 🔥Use VirtualizedList to optimize image loading and rendering
+
+Also provide pinch gesture zoom on iOS (soon on Android)
 
 Try with Expo: https://expo.io/@antonkalinin/react-native-image-viewing
 

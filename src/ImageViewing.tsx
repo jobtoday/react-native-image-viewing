@@ -7,7 +7,13 @@
  */
 
 import React, { ComponentType } from "react";
-import { Dimensions, FlatList, Modal, StyleSheet, View } from "react-native";
+import {
+  Dimensions,
+  Modal,
+  StyleSheet,
+  View,
+  VirtualizedList
+} from "react-native";
 
 import ImageItem from "./ImageItem/ImageItem";
 import ImageDefaultHeader from "./ImageDefaultHeader";
@@ -44,7 +50,7 @@ function ImageViewing({
   HeaderComponent,
   FooterComponent
 }: Props) {
-  let flatList = React.createRef<FlatList<ImageSource>>();
+  let imageList = React.createRef<VirtualizedList<ImageSource>>();
   const [opacity, onRequestCloseEnhanced] = useRequestClose(onRequestClose);
   const [currentImageIndex, onScroll] = useImageIndexChange(imageIndex, SCREEN);
 
@@ -65,13 +71,18 @@ function ImageViewing({
             <ImageDefaultHeader onRequestClose={onRequestCloseEnhanced} />
           )}
         </View>
-        <FlatList
-          ref={flatList}
+        <VirtualizedList
+          ref={imageList}
           data={images}
           horizontal
           pagingEnabled
+          windowSize={2}
+          initialNumToRender={1}
+          maxToRenderPerBatch={1}
           nestedScrollEnabled={true}
           initialScrollIndex={imageIndex}
+          getItem={(_, index) => images[index]}
+          getItemCount={() => images.length}
           getItemLayout={(_, index) => ({
             length: SCREEN_WIDTH,
             offset: SCREEN_WIDTH * index,
@@ -80,9 +91,11 @@ function ImageViewing({
           renderItem={({ item: imageSrc }) => (
             <ImageItem
               onZoom={isZoomed => {
-                if (flatList?.current) {
+                if (imageList?.current) {
                   // @ts-ignore
-                  flatList.current.setNativeProps({ scrollEnabled: !isZoomed });
+                  imageList.current.setNativeProps({
+                    scrollEnabled: !isZoomed
+                  });
                 }
               }}
               imageSrc={imageSrc}
