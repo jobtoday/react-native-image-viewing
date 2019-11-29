@@ -56,7 +56,7 @@ const [visible, setIsVisible] = useState(false);
 />;
 ```
 
-#### [See Example](https://github.com/antonKalinin/react-native-image-viewing/blob/master/example/App.js)
+#### [See Example](https://github.com/jobtoday/react-native-image-viewing/blob/master/example/App.tsx#L62-L80)
 
 ## Props
 

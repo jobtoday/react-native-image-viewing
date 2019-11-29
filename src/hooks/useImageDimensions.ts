@@ -40,8 +40,18 @@ const useImageDimensions = (image: ImageSource): Dimensions | null => {
     });
   };
 
+  let isImageUnmounted = false;
+
   useEffect(() => {
-    getImageDimensions(image).then(setDimensions);
+    getImageDimensions(image).then(dimensions => {
+      if (!isImageUnmounted) {
+        setDimensions(dimensions);
+      }
+    });
+
+    return () => {
+      isImageUnmounted = true;
+    };
   }, [image]);
 
   return dimensions;
