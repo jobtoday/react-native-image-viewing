@@ -33,15 +33,16 @@ const styles = StyleSheet.create({
   },
   closeButton: {
     marginRight: 16,
-    width: 40,
-    height: 40,
+    width: 45,
+    height: 45,
     alignItems: "center",
     justifyContent: "center",
-    borderRadius: 20,
+    borderRadius: 22.5,
     backgroundColor: "#00000077"
   },
   closeText: {
     fontSize: 25,
+    textAlign: "center",
     color: "#FFF"
   }
 });

@@ -46,7 +46,7 @@ export const styleFromImageDimensions = (
   image: Dimensions | null,
   screen: Dimensions
 ) => {
-  if (!image) {
+  if (!image?.width || !image?.height) {
     return [{ width: 0, height: 0 }, 1] as const;
   }
 
