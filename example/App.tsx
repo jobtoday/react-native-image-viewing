@@ -62,7 +62,7 @@ export default function App() {
       <ImageViewing
         images={getImageUrls(images)}
         imageIndex={currentImageIndex}
-        isVisible={isVisible}
+        visible={isVisible}
         onRequestClose={onRequestClose}
         HeaderComponent={
           images === travel

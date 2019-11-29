@@ -25,11 +25,11 @@ import { ImageSource } from "./@types";
 type Props = {
   images: ImageSource[];
   imageIndex: number;
-  isVisible: boolean;
+  visible: boolean;
   onRequestClose: () => void;
   animationType?: "none" | "fade" | "slide";
   backgroundColor?: string;
-  isSwipeToCloseEnabled?: boolean;
+  swipeToCloseEnabled?: boolean;
   HeaderComponent?: ComponentType<{ imageIndex: number }>;
   FooterComponent?: ComponentType<{ imageIndex: number }>;
 };
@@ -42,11 +42,11 @@ const SCREEN_WIDTH = SCREEN.width;
 function ImageViewing({
   images,
   imageIndex,
-  isVisible,
+  visible,
   onRequestClose,
   animationType = DEFAULT_ANIMATION_TYPE,
   backgroundColor = DEFAULT_BG_COLOR,
-  isSwipeToCloseEnabled,
+  swipeToCloseEnabled,
   HeaderComponent,
   FooterComponent
 }: Props) {
@@ -57,7 +57,7 @@ function ImageViewing({
   return (
     <Modal
       transparent
-      visible={isVisible}
+      visible={visible}
       animationType={animationType}
       onRequestClose={onRequestCloseEnhanced}
     >
@@ -100,7 +100,7 @@ function ImageViewing({
               }}
               imageSrc={imageSrc}
               onRequestClose={onRequestCloseEnhanced}
-              isSwipeToCloseEnabled={isSwipeToCloseEnabled}
+              swipeToCloseEnabled={swipeToCloseEnabled}
             />
           )}
           onMomentumScrollEnd={onScroll}
