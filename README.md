@@ -7,9 +7,9 @@
 
 - 🔥Supports swipe-to-close animation
 - 🔥Custom header and footer components
-- 🔥Use VirtualizedList to optimize image loading and rendering
+- 🔥Uses VirtualizedList to optimize image loading and rendering
 
-Also provide pinch gesture zoom on iOS (soon on Android)
+Also provides pinch zoom on iOS (soon on Android)
 
 Try with Expo: https://expo.io/@antonkalinin/react-native-image-viewing
 
@@ -46,12 +46,12 @@ const images = [
   }
 ];
 
-const [isVisible, setIsVisible] = useState(false);
+const [visible, setIsVisible] = useState(false);
 
 <ImageView
   images={images}
   imageIndex={0}
-  isVisible={isVisible}
+  visible={visible}
   onRequestClose={() => setIsVisible(false)}
 />;
 ```
@@ -60,17 +60,17 @@ const [isVisible, setIsVisible] = useState(false);
 
 ## Props
 
-| Prop name               | Description                                           | Type                    | Required |
-| ----------------------- | ----------------------------------------------------- | ----------------------- | -------- |
-| `images`                | Array of images to display                            | ImageSource[]           | true     |
-| `imageIndex`            | Current index of image to display                     | number                  | true     |
-| `isVisible`             | Is modal shown or not                                 | boolean                 | true     |
-| `onRequestClose`        | Function called to close the modal                    | function                | true     |
-| `animationType`         | Animation modal presented with: default `fade`        | `none`, `fade`, `slide` | false    |
-| `backgroundColor`       | Background color of the modal in HEX (#000000EE)      | string                  | false    |
-| `isSwipeToCloseEnabled` | Close modal with swipe up or down: default `true`     | boolean                 | false    |
-| `HeaderComponent`       | Header component, gets current `imageIndex` as a prop | component, function     | false    |
-| `FooterComponent`       | Footer component, gets current `imageIndex` as a prop | component, function     | false    |
+| Prop name             | Description                                           | Type                    | Required |
+| --------------------- | ----------------------------------------------------- | ----------------------- | -------- |
+| `images`              | Array of images to display                            | ImageSource[]           | true     |
+| `imageIndex`          | Current index of image to display                     | number                  | true     |
+| `visible`             | Is modal shown or not                                 | boolean                 | true     |
+| `onRequestClose`      | Function called to close the modal                    | function                | true     |
+| `animationType`       | Animation modal presented with: default `fade`        | `none`, `fade`, `slide` | false    |
+| `backgroundColor`     | Background color of the modal in HEX (#000000EE)      | string                  | false    |
+| `swipeToCloseEnabled` | Close modal with swipe up or down: default `true`     | boolean                 | false    |
+| `HeaderComponent`     | Header component, gets current `imageIndex` as a prop | component, function     | false    |
+| `FooterComponent`     | Footer component, gets current `imageIndex` as a prop | component, function     | false    |
 
 - ImageSource is an object like { uri: '<http location || file path>' }
 

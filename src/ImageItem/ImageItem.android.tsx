@@ -34,13 +34,13 @@ type Props = {
   imageSrc: ImageSource;
   onRequestClose: () => void;
   onZoom: (isZoomed: boolean) => void;
-  isSwipeToCloseEnabled?: boolean;
+  swipeToCloseEnabled?: boolean;
 };
 
 const ImageItem = ({
   imageSrc,
   onRequestClose,
-  isSwipeToCloseEnabled = true
+  swipeToCloseEnabled = true
 }: Props) => {
   const imageDimensions = useImageDimensions(imageSrc);
   const [isLoaded, setLoadEnd] = useState(false);
@@ -92,8 +92,8 @@ const ImageItem = ({
         pagingEnabled
         nestedScrollEnabled
         contentContainerStyle={styles.imageScrollContainer}
-        scrollEnabled={isSwipeToCloseEnabled}
-        {...(isSwipeToCloseEnabled && {
+        scrollEnabled={swipeToCloseEnabled}
+        {...(swipeToCloseEnabled && {
           onScroll,
           onScrollEndDrag
         })}

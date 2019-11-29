@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "lib": ["esnext"],
-    "target": "esnext",
+    "target": "es2019",
     "jsx": "react-native",
     "strict": true,
     "esModuleInterop": true,
