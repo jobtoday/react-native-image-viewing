@@ -91,6 +91,8 @@ const ImageItem = ({
         style={styles.listItem}
         pagingEnabled
         nestedScrollEnabled
+        showsHorizontalScrollIndicator={false}
+        showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.imageScrollContainer}
         scrollEnabled={swipeToCloseEnabled}
         {...(swipeToCloseEnabled && {

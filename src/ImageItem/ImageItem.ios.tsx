@@ -92,6 +92,8 @@ const ImageItem = ({
         style={styles.listItem}
         pinchGestureEnabled
         nestedScrollEnabled={true}
+        showsHorizontalScrollIndicator={false}
+        showsVerticalScrollIndicator={false}
         maximumZoomScale={Math.max(1 / scale, 1)}
         contentContainerStyle={styles.imageScrollContainer}
         scrollEnabled={swipeToCloseEnabled}
