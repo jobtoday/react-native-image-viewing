@@ -9,7 +9,7 @@
 - 🔥Custom header and footer components
 - 🔥Uses VirtualizedList to optimize image loading and rendering
 
-Also provides pinch zoom on iOS (soon on Android)
+Also provides pinch to zoom on iOS (soon on Android)
 
 Try with Expo: https://expo.io/@antonkalinin/react-native-image-viewing
 
