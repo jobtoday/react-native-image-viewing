@@ -80,6 +80,8 @@ function ImageViewing({
           initialNumToRender={1}
           maxToRenderPerBatch={1}
           nestedScrollEnabled={true}
+          showsHorizontalScrollIndicator={false}
+          showsVerticalScrollIndicator={false}
           initialScrollIndex={imageIndex}
           getItem={(_, index) => images[index]}
           getItemCount={() => images.length}
