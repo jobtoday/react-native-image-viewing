@@ -6,15 +6,10 @@
  *
  */
 
-import React, { ComponentType } from "react";
-import {
-  Dimensions,
-  Modal,
-  StyleSheet,
-  View,
-  VirtualizedList
-} from "react-native";
+import React, { ComponentType, useCallback } from "react";
+import { Dimensions, StyleSheet, View, VirtualizedList } from "react-native";
 
+import Modal from "./Modal/Modal";
 import ImageItem from "./ImageItem/ImageItem";
 import ImageDefaultHeader from "./ImageDefaultHeader";
 
@@ -50,9 +45,20 @@ function ImageViewing({
   HeaderComponent,
   FooterComponent
 }: Props) {
-  let imageList = React.createRef<VirtualizedList<ImageSource>>();
+  const imageList = React.createRef<VirtualizedList<ImageSource>>();
   const [opacity, onRequestCloseEnhanced] = useRequestClose(onRequestClose);
   const [currentImageIndex, onScroll] = useImageIndexChange(imageIndex, SCREEN);
+  const onZoom = useCallback(
+    (isZoomed: boolean) => {
+      if (imageList?.current) {
+        // @ts-ignore
+        imageList.current.setNativeProps({
+          scrollEnabled: !isZoomed
+        });
+      }
+    },
+    [imageList]
+  );
 
   return (
     <Modal
@@ -60,6 +66,7 @@ function ImageViewing({
       visible={visible}
       animationType={animationType}
       onRequestClose={onRequestCloseEnhanced}
+      supportedOrientations={["portrait"]}
     >
       <View style={[styles.container, { opacity, backgroundColor }]}>
         <View style={styles.header}>
@@ -79,7 +86,6 @@ function ImageViewing({
           windowSize={2}
           initialNumToRender={1}
           maxToRenderPerBatch={1}
-          nestedScrollEnabled={true}
           showsHorizontalScrollIndicator={false}
           showsVerticalScrollIndicator={false}
           initialScrollIndex={imageIndex}
@@ -92,14 +98,7 @@ function ImageViewing({
           })}
           renderItem={({ item: imageSrc }) => (
             <ImageItem
-              onZoom={isZoomed => {
-                if (imageList?.current) {
-                  // @ts-ignore
-                  imageList.current.setNativeProps({
-                    scrollEnabled: !isZoomed
-                  });
-                }
-              }}
+              onZoom={onZoom}
               imageSrc={imageSrc}
               onRequestClose={onRequestCloseEnhanced}
               swipeToCloseEnabled={swipeToCloseEnabled}

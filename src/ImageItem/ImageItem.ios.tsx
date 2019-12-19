@@ -19,7 +19,7 @@ import {
 
 import useImageDimensions from "../hooks/useImageDimensions";
 
-import { styleFromImageDimensions } from "../utils";
+import { getImageStyles, getImageTransform } from "../utils";
 import { ImageSource } from "../@types";
 import { ImageLoading } from "./ImageLoading";
 
@@ -42,24 +42,19 @@ const ImageItem = ({
   onRequestClose,
   swipeToCloseEnabled = true
 }: Props) => {
-  const imageDimensions = useImageDimensions(imageSrc);
   const [isLoaded, setLoadEnd] = useState(false);
+  const imageDimensions = useImageDimensions(imageSrc);
+  const [translate, scale] = getImageTransform(imageDimensions, SCREEN);
   const scrollY = new Animated.Value(0);
+  const translateValue = new Animated.ValueXY(translate);
+  const maxScale = scale && scale > 0 ? Math.max(1 / scale, 1) : 1;
 
+  const imagesStyles = getImageStyles(imageDimensions, translateValue);
   const imageOpacity = scrollY.interpolate({
     inputRange: [-SWIPE_CLOSE_OFFSET, 0, SWIPE_CLOSE_OFFSET],
-    outputRange: [0.33, 1, 0.33]
+    outputRange: [0.5, 1, 0.5]
   });
-
-  const [imagesStyles, scale] = styleFromImageDimensions(
-    imageDimensions,
-    SCREEN
-  );
-
-  const imageStylesWithOpacity = {
-    ...imagesStyles,
-    opacity: imageOpacity
-  };
+  const imageStylesWithOpacity = { ...imagesStyles, opacity: imageOpacity };
 
   const onScrollEndDrag = ({
     nativeEvent
@@ -94,7 +89,7 @@ const ImageItem = ({
         nestedScrollEnabled={true}
         showsHorizontalScrollIndicator={false}
         showsVerticalScrollIndicator={false}
-        maximumZoomScale={Math.max(1 / scale, 1)}
+        maximumZoomScale={maxScale}
         contentContainerStyle={styles.imageScrollContainer}
         scrollEnabled={swipeToCloseEnabled}
         {...(swipeToCloseEnabled && {
