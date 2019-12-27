@@ -5,11 +5,10 @@
 [![npm version](https://badge.fury.io/js/react-native-image-viewing.svg)](https://badge.fury.io/js/react-native-image-viewing)
 [![styled with prettier](https://img.shields.io/badge/styled_with-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
 
+- 🔥Pinch zoom for both iOS and Android
 - 🔥Supports swipe-to-close animation
 - 🔥Custom header and footer components
 - 🔥Uses VirtualizedList to optimize image loading and rendering
-
-Also provides pinch to zoom on iOS (soon on Android)
 
 Try with Expo: https://expo.io/@antonkalinin/react-native-image-viewing
 
