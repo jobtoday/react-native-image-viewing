@@ -22,4 +22,5 @@ declare const _default: React.MemoExoticComponent<({
   onRequestClose,
   swipeToCloseEnabled
 }: Props) => JSX.Element>;
+
 export default _default;

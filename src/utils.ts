@@ -6,7 +6,14 @@
  *
  */
 
-import { Animated } from "react-native";
+import {
+  Animated,
+  GestureResponderEvent,
+  PanResponder,
+  PanResponderGestureState,
+  PanResponderInstance,
+  NativeTouchEvent
+} from "react-native";
 import { Dimensions, Position } from "./@types";
 
 type CacheStorageItem = { key: string; value: any };
@@ -42,35 +49,48 @@ export const splitArrayIntoBatches = (arr: any[], batchSize: number): any[] =>
     return result;
   }, []);
 
-export const styleFromImageDimensions = (
+export const getImageTransform = (
   image: Dimensions | null,
   screen: Dimensions
 ) => {
   if (!image?.width || !image?.height) {
-    return [{ width: 0, height: 0 }, 1] as const;
+    return [] as const;
   }
 
   const wScale = screen.width / image.width;
   const hScale = screen.height / image.height;
   const scale = Math.min(wScale, hScale);
-  const scaleAnimatedValue = new Animated.Value(scale);
   const { x, y } = getImageTranslate(image, screen);
-  const translateValue = new Animated.ValueXY({ x, y });
-  const transform = translateValue.getTranslateTransform();
 
-  transform.push({ scale: scaleAnimatedValue });
-
-  return [
-    {
-      width: image.width,
-      height: image.height,
-      transform
-    },
-    scale
-  ] as const;
+  return [{ x, y }, scale] as const;
 };
 
-const getImageTranslate = (image: Dimensions, screen: Dimensions): Position => {
+export const getImageStyles = (
+  image: Dimensions | null,
+  translate: Animated.ValueXY,
+  scale?: Animated.Value
+) => {
+  if (!image?.width || !image?.height) {
+    return { width: 0, height: 0 };
+  }
+
+  const transform = translate.getTranslateTransform();
+
+  if (scale) {
+    transform.push({ scale }, { perspective: new Animated.Value(1000) });
+  }
+
+  return {
+    width: image.width,
+    height: image.height,
+    transform
+  };
+};
+
+export const getImageTranslate = (
+  image: Dimensions,
+  screen: Dimensions
+): Position => {
   const getTranslateForAxis = (axis: "x" | "y"): number => {
     const imageSize = axis === "x" ? image.width : image.height;
     const screenSize = axis === "x" ? screen.width : screen.height;
@@ -86,4 +106,60 @@ const getImageTranslate = (image: Dimensions, screen: Dimensions): Position => {
     x: getTranslateForAxis("x"),
     y: getTranslateForAxis("y")
   };
+};
+
+export const getImageDimensionsByTranslate = (
+  translate: Position,
+  screen: Dimensions
+): Dimensions => {
+  // TODO Add vertical image case
+  return {
+    width: screen.width - translate.x * 2,
+    height: screen.height - translate.y * 2
+  };
+};
+
+type HandlerType = (
+  event: GestureResponderEvent,
+  state: PanResponderGestureState
+) => void;
+
+type PanResponderProps = {
+  onStart?: HandlerType;
+  onMove: HandlerType;
+  onRelease?: HandlerType;
+  onTerminate?: HandlerType;
+};
+
+export const createPanResponder = ({
+  onStart,
+  onMove,
+  onRelease,
+  onTerminate
+}: PanResponderProps): PanResponderInstance =>
+  PanResponder.create({
+    onStartShouldSetPanResponder: () => true,
+    onStartShouldSetPanResponderCapture: () => true,
+    onMoveShouldSetPanResponder: () => true,
+    onMoveShouldSetPanResponderCapture: () => true,
+    onPanResponderStart: onStart,
+    onPanResponderMove: onMove,
+    onPanResponderRelease: onRelease,
+    onPanResponderTerminate: onTerminate,
+    onPanResponderTerminationRequest: () => true,
+    onShouldBlockNativeResponder: () => false
+  });
+
+export const getDistanceBetweenTouches = (
+  touches: NativeTouchEvent[]
+): number => {
+  const [a, b] = touches;
+
+  if (a == null || b == null) {
+    return 0;
+  }
+
+  return Math.sqrt(
+    Math.pow(a.pageX - b.pageX, 2) + Math.pow(a.pageY - b.pageY, 2)
+  );
 };
