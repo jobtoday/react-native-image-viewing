@@ -6,16 +6,34 @@
  *
  */
 
-import React from "react";
-import { View, StyleSheet, StatusBar } from "react-native";
+import React, { useEffect } from "react";
+import { BackHandler, View, StyleSheet, StatusBar } from "react-native";
 
 type Props = {
   visible: boolean;
   transparent: boolean;
   children: JSX.Element;
+  onRequestClose: () => void;
 };
 
-const Modal = ({ visible, children }: Props) => {
+const Modal = ({ visible, children, onRequestClose }: Props) => {
+  useEffect(() => {
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      () => {
+        if (typeof onRequestClose === "function") {
+          onRequestClose();
+        }
+
+        return true;
+      }
+    );
+
+    return () => {
+      backHandler.remove();
+    };
+  }, []);
+
   return <>{visible && <View style={styles.root}>{children}</View>}</>;
 };
 
