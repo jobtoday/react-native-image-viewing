@@ -7,12 +7,19 @@
  */
 
 import React, { ComponentType, useCallback } from "react";
-import { Dimensions, StyleSheet, View, VirtualizedList } from "react-native";
+import {
+  Animated,
+  Dimensions,
+  StyleSheet,
+  View,
+  VirtualizedList
+} from "react-native";
 
 import Modal from "./Modal/Modal";
 import ImageItem from "./ImageItem/ImageItem";
 import ImageDefaultHeader from "./ImageDefaultHeader";
 
+import useAnimatedComponents from "./hooks/useAnimatedComponents";
 import useImageIndexChange from "./hooks/useImageIndexChange";
 import useRequestClose from "./hooks/useRequestClose";
 import { ImageSource } from "./@types";
@@ -48,14 +55,17 @@ function ImageViewing({
   const imageList = React.createRef<VirtualizedList<ImageSource>>();
   const [opacity, onRequestCloseEnhanced] = useRequestClose(onRequestClose);
   const [currentImageIndex, onScroll] = useImageIndexChange(imageIndex, SCREEN);
+  const [
+    headerTransform,
+    footerTransform,
+    toggleBarsVisible
+  ] = useAnimatedComponents();
+
   const onZoom = useCallback(
-    (isZoomed: boolean) => {
-      if (imageList?.current) {
-        // @ts-ignore
-        imageList.current.setNativeProps({
-          scrollEnabled: !isZoomed
-        });
-      }
+    (isScaled: boolean) => {
+      // @ts-ignore
+      imageList?.current?.setNativeProps({ scrollEnabled: !isScaled });
+      toggleBarsVisible(!isScaled);
     },
     [imageList]
   );
@@ -69,7 +79,7 @@ function ImageViewing({
       supportedOrientations={["portrait"]}
     >
       <View style={[styles.container, { opacity, backgroundColor }]}>
-        <View style={styles.header}>
+        <Animated.View style={[styles.header, { transform: headerTransform }]}>
           {typeof HeaderComponent !== "undefined" ? (
             React.createElement(HeaderComponent, {
               imageIndex: currentImageIndex
@@ -77,7 +87,7 @@ function ImageViewing({
           ) : (
             <ImageDefaultHeader onRequestClose={onRequestCloseEnhanced} />
           )}
-        </View>
+        </Animated.View>
         <VirtualizedList
           ref={imageList}
           data={images}
@@ -108,11 +118,13 @@ function ImageViewing({
           keyExtractor={imageSrc => imageSrc.uri}
         />
         {typeof FooterComponent !== "undefined" && (
-          <View style={styles.footer}>
+          <Animated.View
+            style={[styles.footer, { transform: footerTransform }]}
+          >
             {React.createElement(FooterComponent, {
               imageIndex: currentImageIndex
             })}
-          </View>
+          </Animated.View>
         )}
       </View>
     </Modal>
