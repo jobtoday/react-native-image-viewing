@@ -95,11 +95,7 @@ export const getImageTranslate = (
     const imageSize = axis === "x" ? image.width : image.height;
     const screenSize = axis === "x" ? screen.width : screen.height;
 
-    if (image.width >= image.height) {
-      return (screenSize - imageSize) / 2;
-    }
-
-    return screenSize / 2 - imageSize / 2;
+    return (screenSize - imageSize) / 2;
   };
 
   return {
@@ -111,12 +107,27 @@ export const getImageTranslate = (
 export const getImageDimensionsByTranslate = (
   translate: Position,
   screen: Dimensions
-): Dimensions => {
-  // TODO Add vertical image case
-  return {
-    width: screen.width - translate.x * 2,
-    height: screen.height - translate.y * 2
+): Dimensions => ({
+  width: screen.width - translate.x * 2,
+  height: screen.height - translate.y * 2
+});
+
+export const getImageTranslateForScale = (
+  currentTranslate: Position,
+  targetScale: number,
+  screen: Dimensions
+): Position => {
+  const { width, height } = getImageDimensionsByTranslate(
+    currentTranslate,
+    screen
+  );
+
+  const targetImageDimensions = {
+    width: width * targetScale,
+    height: height * targetScale
   };
+
+  return getImageTranslate(targetImageDimensions, screen);
 };
 
 type HandlerType = (

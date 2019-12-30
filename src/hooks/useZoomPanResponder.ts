@@ -21,6 +21,7 @@ import {
   createPanResponder,
   getDistanceBetweenTouches,
   getImageTranslate,
+  getImageTranslateForScale,
   getImageDimensionsByTranslate
 } from "../utils";
 
@@ -29,6 +30,7 @@ const SCREEN_WIDTH = SCREEN.width;
 const SCREEN_HEIGHT = SCREEN.height;
 
 const SCALE_MAX = 2;
+const DOUBLE_TAP_DELAY = 300;
 const OUT_BOUND_MULTIPLIER = 0.75;
 
 type Props = {
@@ -52,6 +54,7 @@ const useZoomPanResponder = ({
   let currentTranslate = initialTranslate;
   let tmpScale = 0;
   let tmpTranslate: Position | null = null;
+  let lastTapTS: number | null = null;
 
   const scaleValue = new Animated.Value(initialScale);
   const translateValue = new Animated.ValueXY(initialTranslate);
@@ -98,6 +101,54 @@ const useZoomPanResponder = ({
     ) => {
       initialTouches = event.nativeEvent.touches;
       numberInitialTouches = gestureState.numberActiveTouches;
+
+      if (gestureState.numberActiveTouches > 1) {
+        return;
+      }
+
+      // Handle double tap event by calculating diff between
+      // first and second taps timestamps
+      const nowTS = new Date().getTime();
+
+      if (lastTapTS && nowTS - lastTapTS < DOUBLE_TAP_DELAY) {
+        const isScaled = currentScale !== initialScale;
+        const touch = event.nativeEvent.touches[0];
+        const targetScale = 1;
+        const nextScale = isScaled ? initialScale : targetScale;
+        const nextTranslate = isScaled
+          ? initialTranslate
+          : getImageTranslateForScale(initialTranslate, targetScale, SCREEN);
+
+        onZoom(!isScaled);
+
+        Animated.parallel(
+          [
+            Animated.timing(translateValue.x, {
+              toValue: nextTranslate.x,
+              duration: 300,
+              useNativeDriver: true
+            }),
+            Animated.timing(translateValue.y, {
+              toValue: nextTranslate.y,
+              duration: 300,
+              useNativeDriver: true
+            }),
+            Animated.timing(scaleValue, {
+              toValue: nextScale,
+              duration: 300,
+              useNativeDriver: true
+            })
+          ],
+          { stopTogether: false }
+        ).start(() => {
+          currentScale = nextScale;
+          currentTranslate = nextTranslate;
+        });
+
+        lastTapTS = null;
+      } else {
+        lastTapTS = nowTS;
+      }
     },
     onMove: (
       event: GestureResponderEvent,
