@@ -21,7 +21,6 @@ import {
   createPanResponder,
   getDistanceBetweenTouches,
   getImageTranslate,
-  getImageTranslateForScale,
   getImageDimensionsByTranslate
 } from "../utils";
 
@@ -64,10 +63,10 @@ const useZoomPanResponder = ({
     SCREEN
   );
 
-  const getBounds = () => {
+  const getBounds = (scale: number) => {
     const scaledImageDimensions = {
-      width: imageDimensions.width * currentScale,
-      height: imageDimensions.height * currentScale
+      width: imageDimensions.width * scale,
+      height: imageDimensions.height * scale
     };
     const translateDelta = getImageTranslate(scaledImageDimensions, SCREEN);
 
@@ -77,6 +76,25 @@ const useZoomPanResponder = ({
     const bottom = top - (scaledImageDimensions.height - SCREEN.height);
 
     return [top, left, bottom, right];
+  };
+
+  const getTranslateInBounds = (translate: Position, scale: number) => {
+    const inBoundTranslate = { x: translate.x, y: translate.y };
+    const [topBound, leftBound, bottomBound, rightBound] = getBounds(scale);
+
+    if (translate.x > leftBound) {
+      inBoundTranslate.x = leftBound;
+    } else if (translate.x < rightBound) {
+      inBoundTranslate.x = rightBound;
+    }
+
+    if (translate.y > topBound) {
+      inBoundTranslate.y = topBound;
+    } else if (translate.y < bottomBound) {
+      inBoundTranslate.y = bottomBound;
+    }
+
+    return inBoundTranslate;
   };
 
   const fitsScreenByWidth = () =>
@@ -111,13 +129,23 @@ const useZoomPanResponder = ({
       const nowTS = new Date().getTime();
 
       if (lastTapTS && nowTS - lastTapTS < DOUBLE_TAP_DELAY) {
-        const isScaled = currentScale !== initialScale;
-        const touch = event.nativeEvent.touches[0];
-        const targetScale = 1;
+        const isScaled = currentTranslate.x !== initialTranslate.x; // currentScale !== initialScale;
+        const { pageX: touchX, pageY: touchY } = event.nativeEvent.touches[0];
+        const targetScale = SCALE_MAX;
         const nextScale = isScaled ? initialScale : targetScale;
         const nextTranslate = isScaled
           ? initialTranslate
-          : getImageTranslateForScale(initialTranslate, targetScale, SCREEN);
+          : getTranslateInBounds(
+              {
+                x:
+                  initialTranslate.x +
+                  (SCREEN_WIDTH / 2 - touchX) * (targetScale / currentScale),
+                y:
+                  initialTranslate.y +
+                  (SCREEN_HEIGHT / 2 - touchY) * (targetScale / currentScale)
+              },
+              targetScale
+            );
 
         onZoom(!isScaled);
 
@@ -143,6 +171,8 @@ const useZoomPanResponder = ({
         ).start(() => {
           currentScale = nextScale;
           currentTranslate = nextTranslate;
+
+          // handlers.onRelease();
         });
 
         lastTapTS = null;
@@ -215,7 +245,9 @@ const useZoomPanResponder = ({
       if (isMoveGesture && currentScale > initialScale) {
         const { x, y } = currentTranslate;
         const { dx, dy } = gestureState;
-        const [topBound, leftBound, bottomBound, rightBound] = getBounds();
+        const [topBound, leftBound, bottomBound, rightBound] = getBounds(
+          currentScale
+        );
 
         let nextTranslateX = x + dx;
         let nextTranslateY = y + dy;
@@ -274,7 +306,9 @@ const useZoomPanResponder = ({
 
       if (tmpTranslate) {
         const { x, y } = tmpTranslate;
-        const [topBound, leftBound, bottomBound, rightBound] = getBounds();
+        const [topBound, leftBound, bottomBound, rightBound] = getBounds(
+          currentScale
+        );
 
         let nextTranslateX = x;
         let nextTranslateY = y;
