@@ -32,6 +32,7 @@ type Props = {
   animationType?: "none" | "fade" | "slide";
   backgroundColor?: string;
   swipeToCloseEnabled?: boolean;
+  doubleTapToZoomEnabled?: boolean;
   HeaderComponent?: ComponentType<{ imageIndex: number }>;
   FooterComponent?: ComponentType<{ imageIndex: number }>;
 };
@@ -49,6 +50,7 @@ function ImageViewing({
   animationType = DEFAULT_ANIMATION_TYPE,
   backgroundColor = DEFAULT_BG_COLOR,
   swipeToCloseEnabled,
+  doubleTapToZoomEnabled,
   HeaderComponent,
   FooterComponent
 }: Props) {
@@ -112,6 +114,7 @@ function ImageViewing({
               imageSrc={imageSrc}
               onRequestClose={onRequestCloseEnhanced}
               swipeToCloseEnabled={swipeToCloseEnabled}
+              doubleTapToZoomEnabled={doubleTapToZoomEnabled}
             />
           )}
           onMomentumScrollEnd={onScroll}

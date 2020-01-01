@@ -14,6 +14,7 @@ declare type Props = {
   onRequestClose: () => void;
   onZoom: (isZoomed: boolean) => void;
   swipeToCloseEnabled?: boolean;
+  doubleTapToZoomEnabled?: boolean;
 };
 
 declare const _default: React.MemoExoticComponent<({

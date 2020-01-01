@@ -34,13 +34,15 @@ type Props = {
   onRequestClose: () => void;
   onZoom: (isZoomed: boolean) => void;
   swipeToCloseEnabled?: boolean;
+  doubleTapToZoomEnabled?: boolean;
 };
 
 const ImageItem = ({
   imageSrc,
   onZoom,
   onRequestClose,
-  swipeToCloseEnabled = true
+  swipeToCloseEnabled = true,
+  doubleTapToZoomEnabled = true
 }: Props) => {
   const imageContainer = React.createRef();
   const imageDimensions = useImageDimensions(imageSrc);
@@ -62,7 +64,8 @@ const ImageItem = ({
   const [panHandlers, scaleValue, translateValue] = useZoomPanResponder({
     initialScale: scale || 1,
     initialTranslate: translate || { x: 0, y: 0 },
-    onZoom: onZoomPerformed
+    onZoom: onZoomPerformed,
+    doubleTapToZoomEnabled
   });
 
   const imagesStyles = getImageStyles(

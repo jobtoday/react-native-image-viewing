@@ -36,12 +36,14 @@ type Props = {
   initialScale: number;
   initialTranslate: Position;
   onZoom: (isZoomed: boolean) => void;
+  doubleTapToZoomEnabled: boolean;
 };
 
 const useZoomPanResponder = ({
   initialScale,
   initialTranslate,
-  onZoom
+  onZoom,
+  doubleTapToZoomEnabled
 }: Props): Readonly<[
   GestureResponderHandlers,
   Animated.Value,
@@ -129,7 +131,7 @@ const useZoomPanResponder = ({
         lastTapTS && tapTS - lastTapTS < DOUBLE_TAP_DELAY
       );
 
-      if (isDoubleTapPerformed) {
+      if (doubleTapToZoomEnabled && isDoubleTapPerformed) {
         const isScaled = currentTranslate.x !== initialTranslate.x; // currentScale !== initialScale;
         const { pageX: touchX, pageY: touchY } = event.nativeEvent.touches[0];
         const targetScale = SCALE_MAX;
@@ -184,7 +186,7 @@ const useZoomPanResponder = ({
       gestureState: PanResponderGestureState
     ) => {
       // Don't need to handle move because double tap in progress (was handled in onStart)
-      if (isDoubleTapPerformed) return;
+      if (doubleTapToZoomEnabled && isDoubleTapPerformed) return;
 
       if (
         numberInitialTouches === 1 &&
