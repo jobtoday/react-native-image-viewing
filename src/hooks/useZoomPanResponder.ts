@@ -53,6 +53,7 @@ const useZoomPanResponder = ({
   let currentTranslate = initialTranslate;
   let tmpScale = 0;
   let tmpTranslate: Position | null = null;
+  let isDoubleTapPerformed = false;
   let lastTapTS: number | null = null;
 
   const scaleValue = new Animated.Value(initialScale);
@@ -120,15 +121,15 @@ const useZoomPanResponder = ({
       initialTouches = event.nativeEvent.touches;
       numberInitialTouches = gestureState.numberActiveTouches;
 
-      if (gestureState.numberActiveTouches > 1) {
-        return;
-      }
+      if (gestureState.numberActiveTouches > 1) return;
 
-      // Handle double tap event by calculating diff between
-      // first and second taps timestamps
-      const nowTS = new Date().getTime();
+      const tapTS = Date.now();
+      // Handle double tap event by calculating diff between first and second taps timestamps
+      isDoubleTapPerformed = Boolean(
+        lastTapTS && tapTS - lastTapTS < DOUBLE_TAP_DELAY
+      );
 
-      if (lastTapTS && nowTS - lastTapTS < DOUBLE_TAP_DELAY) {
+      if (isDoubleTapPerformed) {
         const isScaled = currentTranslate.x !== initialTranslate.x; // currentScale !== initialScale;
         const { pageX: touchX, pageY: touchY } = event.nativeEvent.touches[0];
         const targetScale = SCALE_MAX;
@@ -171,19 +172,20 @@ const useZoomPanResponder = ({
         ).start(() => {
           currentScale = nextScale;
           currentTranslate = nextTranslate;
-
-          // handlers.onRelease();
         });
 
         lastTapTS = null;
       } else {
-        lastTapTS = nowTS;
+        lastTapTS = Date.now();
       }
     },
     onMove: (
       event: GestureResponderEvent,
       gestureState: PanResponderGestureState
     ) => {
+      // Don't need to handle move because double tap in progress (was handled in onStart)
+      if (isDoubleTapPerformed) return;
+
       if (
         numberInitialTouches === 1 &&
         gestureState.numberActiveTouches === 2
@@ -192,10 +194,10 @@ const useZoomPanResponder = ({
         initialTouches = event.nativeEvent.touches;
       }
 
+      const isTapGesture =
+        numberInitialTouches == 1 && gestureState.numberActiveTouches === 1;
       const isPinchGesture =
         numberInitialTouches === 2 && gestureState.numberActiveTouches === 2;
-      const isMoveGesture =
-        numberInitialTouches == 1 && gestureState.numberActiveTouches === 1;
 
       if (isPinchGesture) {
         const initialDistance = getDistanceBetweenTouches(initialTouches);
@@ -242,7 +244,7 @@ const useZoomPanResponder = ({
         tmpScale = nextScale;
       }
 
-      if (isMoveGesture && currentScale > initialScale) {
+      if (isTapGesture && currentScale > initialScale) {
         const { x, y } = currentTranslate;
         const { dx, dy } = gestureState;
         const [topBound, leftBound, bottomBound, rightBound] = getBounds(
@@ -290,6 +292,10 @@ const useZoomPanResponder = ({
       }
     },
     onRelease: () => {
+      if (isDoubleTapPerformed) {
+        isDoubleTapPerformed = false;
+      }
+
       if (tmpScale > 0) {
         if (tmpScale < initialScale || tmpScale > SCALE_MAX) {
           tmpScale = tmpScale < initialScale ? initialScale : SCALE_MAX;
