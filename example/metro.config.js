@@ -17,6 +17,6 @@ module.exports = {
       }
     )
   },
-  projectRoot: [path.resolve(__dirname)],
+  projectRoot: path.resolve(__dirname),
   watchFolders: [path.resolve(__dirname, "../src")]
 };
