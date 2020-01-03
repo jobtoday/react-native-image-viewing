@@ -2,6 +2,7 @@
   "expo": {
     "name": "React Native Image Viewing",
     "slug": "react-native-image-viewing",
+    "description": "React Native modal image view with pinch zoom",
     "privacy": "public",
     "sdkVersion": "36.0.0",
     "platforms": ["ios", "android", "web"],
