@@ -16,11 +16,11 @@ import {
   NativeSyntheticEvent
 } from "react-native";
 
-import useImageDimensions from "../hooks/useImageDimensions";
-import useZoomPanResponder from "../hooks/useZoomPanResponder";
+import useImageDimensions from "../../hooks/useImageDimensions";
+import useZoomPanResponder from "../../hooks/useZoomPanResponder";
 
-import { getImageStyles, getImageTransform } from "../utils";
-import { ImageSource } from "../@types";
+import { getImageStyles, getImageTransform } from "../../utils";
+import { ImageSource } from "../../@types";
 import { ImageLoading } from "./ImageLoading";
 
 const SWIPE_CLOSE_OFFSET = 75;

@@ -6,8 +6,14 @@
  *
  */
 
-import { useEffect, useState } from "react";
-import { Animated } from "react-native";
+import React, { useCallback } from "react";
+import {
+  ScrollView,
+  NativeTouchEvent,
+  NativeSyntheticEvent
+} from "react-native";
+
+import { Dimensions } from "../@types";
 
 const DOUBLE_TAP_DELAY = 300;
 let lastTapTS: number | null = null;
@@ -17,46 +23,47 @@ let lastTapTS: number | null = null;
  * Same functionality for Android implemented inside useZoomPanResponder hook.
  */
 function useDoubleTapToZoom(
-  initialScale: number,
-  targetScale: number,
-  ref: any,
-  onZoom: (isScaled: boolean) => void
+  scrollViewRef: React.RefObject<ScrollView>,
+  scaled: boolean,
+  screen: Dimensions
 ) {
-  const [scale, setScale] = useState(initialScale);
-  const scaleValue = new Animated.Value(initialScale);
+  const handleDoubleTap = useCallback(
+    (event: NativeSyntheticEvent<NativeTouchEvent>) => {
+      const nowTS = new Date().getTime();
+      const scrollResponderRef = scrollViewRef?.current?.getScrollResponder();
 
-  useEffect(() => {
-    scaleValue.addListener(({ value }) => {
-      ref?.current?.setNativeProps({ zoomScale: value });
-    });
+      if (lastTapTS && nowTS - lastTapTS < DOUBLE_TAP_DELAY) {
+        const { pageX, pageY } = event.nativeEvent;
+        let targetX = 0;
+        let targetY = 0;
+        let targetWidth = screen.width;
+        let targetHeight = screen.height;
 
-    return () => {
-      scaleValue.removeAllListeners();
-    };
-  });
+        // Zooming in
+        // TODO: Add more precise calculation of targetX, targetY based on touch
+        if (!scaled) {
+          targetX = pageX / 2;
+          targetY = pageY / 2;
+          targetWidth = screen.width / 2;
+          targetHeight = screen.height / 2;
+        }
 
-  const handleDoubleTap = () => {
-    const nowTS = new Date().getTime();
+        // @ts-ignore
+        scrollResponderRef?.scrollResponderZoomTo({
+          x: targetX,
+          y: targetY,
+          width: targetWidth,
+          height: targetHeight,
+          animated: true
+        });
+      } else {
+        lastTapTS = nowTS;
+      }
+    },
+    [scaled]
+  );
 
-    if (lastTapTS && nowTS - lastTapTS < DOUBLE_TAP_DELAY) {
-      lastTapTS = null;
-      const nextScale =
-        !scale || scale === initialScale ? targetScale : initialScale;
-
-      const isScaled = nextScale !== initialScale;
-
-      onZoom(isScaled);
-
-      Animated.timing(scaleValue, {
-        toValue: nextScale,
-        duration: 300
-      }).start(() => setScale(nextScale));
-    } else {
-      lastTapTS = nowTS;
-    }
-  };
-
-  return [scale, handleDoubleTap] as const;
+  return handleDoubleTap;
 }
 
 export default useDoubleTapToZoom;

@@ -7,7 +7,7 @@
  */
 
 import React from "react";
-import { ImageSource } from "../@types";
+import { ImageSource } from "../../@types";
 
 declare type Props = {
   imageSrc: ImageSource;

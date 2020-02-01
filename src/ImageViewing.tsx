@@ -15,9 +15,9 @@ import {
   VirtualizedList
 } from "react-native";
 
-import Modal from "./Modal/Modal";
-import ImageItem from "./ImageItem/ImageItem";
-import ImageDefaultHeader from "./ImageDefaultHeader";
+import Modal from "./components/Modal/Modal";
+import ImageItem from "./components/ImageItem/ImageItem";
+import ImageDefaultHeader from "./components/ImageDefaultHeader";
 
 import useAnimatedComponents from "./hooks/useAnimatedComponents";
 import useImageIndexChange from "./hooks/useImageIndexChange";
