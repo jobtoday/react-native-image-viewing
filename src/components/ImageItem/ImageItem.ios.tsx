@@ -6,21 +6,24 @@
  *
  */
 
-import React, { useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 
 import {
   Animated,
   Dimensions,
+  ScrollView,
   StyleSheet,
   View,
   NativeScrollEvent,
-  NativeSyntheticEvent
+  NativeSyntheticEvent,
+  TouchableWithoutFeedback
 } from "react-native";
 
-import useImageDimensions from "../hooks/useImageDimensions";
+import useDoubleTapToZoom from "../../hooks/useDoubleTapToZoom";
+import useImageDimensions from "../../hooks/useImageDimensions";
 
-import { getImageStyles, getImageTransform } from "../utils";
-import { ImageSource } from "../@types";
+import { getImageStyles, getImageTransform } from "../../utils";
+import { ImageSource } from "../../@types";
 import { ImageLoading } from "./ImageLoading";
 
 const SWIPE_CLOSE_OFFSET = 75;
@@ -32,18 +35,24 @@ const SCREEN_HEIGHT = SCREEN.height;
 type Props = {
   imageSrc: ImageSource;
   onRequestClose: () => void;
-  onZoom: (isZoomed: boolean) => void;
+  onZoom: (scaled: boolean) => void;
   swipeToCloseEnabled?: boolean;
+  doubleTapToZoomEnabled?: boolean;
 };
 
 const ImageItem = ({
   imageSrc,
   onZoom,
   onRequestClose,
-  swipeToCloseEnabled = true
+  swipeToCloseEnabled = true,
+  doubleTapToZoomEnabled = true
 }: Props) => {
-  const [isLoaded, setLoadEnd] = useState(false);
+  const scrollViewRef = useRef<ScrollView>(null);
+  const [loaded, setLoaded] = useState(false);
+  const [scaled, setScaled] = useState(false);
   const imageDimensions = useImageDimensions(imageSrc);
+  const handleDoubleTap = useDoubleTapToZoom(scrollViewRef, scaled, SCREEN);
+
   const [translate, scale] = getImageTransform(imageDimensions, SCREEN);
   const scrollValueY = new Animated.Value(0);
   const scaleValue = new Animated.Value(scale || 1);
@@ -61,18 +70,24 @@ const ImageItem = ({
   );
   const imageStylesWithOpacity = { ...imagesStyles, opacity: imageOpacity };
 
-  const onScrollEndDrag = ({
-    nativeEvent
-  }: NativeSyntheticEvent<NativeScrollEvent>) => {
-    const velocityY = nativeEvent?.velocity?.y ?? 0;
-    const isZoomed = nativeEvent?.zoomScale > 1;
+  const onScrollEndDrag = useCallback(
+    ({ nativeEvent }: NativeSyntheticEvent<NativeScrollEvent>) => {
+      const velocityY = nativeEvent?.velocity?.y ?? 0;
+      const scaled = nativeEvent?.zoomScale > 1;
 
-    onZoom(isZoomed);
+      onZoom(scaled);
+      setScaled(scaled);
 
-    if (!isZoomed && Math.abs(velocityY) > SWIPE_CLOSE_VELOCITY) {
-      onRequestClose();
-    }
-  };
+      if (
+        !scaled &&
+        swipeToCloseEnabled &&
+        Math.abs(velocityY) > SWIPE_CLOSE_VELOCITY
+      ) {
+        onRequestClose();
+      }
+    },
+    [scaled]
+  );
 
   const onScroll = ({
     nativeEvent
@@ -88,7 +103,8 @@ const ImageItem = ({
 
   return (
     <View>
-      <Animated.ScrollView
+      <ScrollView
+        ref={scrollViewRef}
         style={styles.listItem}
         pinchGestureEnabled
         nestedScrollEnabled={true}
@@ -97,18 +113,23 @@ const ImageItem = ({
         maximumZoomScale={maxScale}
         contentContainerStyle={styles.imageScrollContainer}
         scrollEnabled={swipeToCloseEnabled}
+        onScrollEndDrag={onScrollEndDrag}
+        scrollEventThrottle={1}
         {...(swipeToCloseEnabled && {
-          onScroll,
-          onScrollEndDrag
+          onScroll
         })}
       >
-        {(!isLoaded || !imageDimensions) && <ImageLoading />}
-        <Animated.Image
-          source={imageSrc}
-          style={imageStylesWithOpacity}
-          onLoad={() => setLoadEnd(true)}
-        />
-      </Animated.ScrollView>
+        {(!loaded || !imageDimensions) && <ImageLoading />}
+        <TouchableWithoutFeedback
+          onPress={doubleTapToZoomEnabled ? handleDoubleTap : undefined}
+        >
+          <Animated.Image
+            source={imageSrc}
+            style={imageStylesWithOpacity}
+            onLoad={() => setLoaded(true)}
+          />
+        </TouchableWithoutFeedback>
+      </ScrollView>
     </View>
   );
 };
