@@ -6,7 +6,7 @@
  *
  */
 
-import React, { ComponentType, useCallback } from "react";
+import React, { ComponentType, useCallback, useEffect } from "react";
 import {
   Animated,
   Dimensions,
@@ -29,6 +29,7 @@ type Props = {
   imageIndex: number;
   visible: boolean;
   onRequestClose: () => void;
+  onImageIndexChange?: (imageIndex: number) => void;
   animationType?: "none" | "fade" | "slide";
   backgroundColor?: string;
   swipeToCloseEnabled?: boolean;
@@ -47,6 +48,7 @@ function ImageViewing({
   imageIndex,
   visible,
   onRequestClose,
+  onImageIndexChange,
   animationType = DEFAULT_ANIMATION_TYPE,
   backgroundColor = DEFAULT_BG_COLOR,
   swipeToCloseEnabled,
@@ -62,6 +64,12 @@ function ImageViewing({
     footerTransform,
     toggleBarsVisible
   ] = useAnimatedComponents();
+
+  useEffect(() => {
+    if (onImageIndexChange) {
+      onImageIndexChange(currentImageIndex);
+    }
+  }, [currentImageIndex]);
 
   const onZoom = useCallback(
     (isScaled: boolean) => {

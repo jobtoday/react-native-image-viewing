@@ -66,6 +66,7 @@ const [visible, setIsVisible] = useState(false);
 | `imageIndex`             | Current index of image to display                     | number                  | true     |
 | `visible`                | Is modal shown or not                                 | boolean                 | true     |
 | `onRequestClose`         | Function called to close the modal                    | function                | true     |
+| `onImageIndexChange`     | Function called when image index has been changed     | function                | false    |
 | `animationType`          | Animation modal presented with: default `fade`        | `none`, `fade`, `slide` | false    |
 | `backgroundColor`        | Background color of the modal in HEX (#000000EE)      | string                  | false    |
 | `swipeToCloseEnabled`    | Close modal with swipe up or down: default `true`     | boolean                 | false    |
