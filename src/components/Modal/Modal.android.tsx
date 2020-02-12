@@ -14,9 +14,10 @@ type Props = {
   transparent: boolean;
   children: JSX.Element;
   onRequestClose: () => void;
+  wrapperStyle: object;
 };
 
-const Modal = ({ visible, children, onRequestClose }: Props) => {
+const Modal = ({ visible, children, onRequestClose, wrapperStyle }: Props) => {
   useEffect(() => {
     const backHandler = BackHandler.addEventListener(
       "hardwareBackPress",
@@ -34,7 +35,11 @@ const Modal = ({ visible, children, onRequestClose }: Props) => {
     };
   }, []);
 
-  return <>{visible && <View style={styles.root}>{children}</View>}</>;
+  return (
+    <>
+      {visible && <View style={[styles.root, wrapperStyle]}>{children}</View>}
+    </>
+  );
 };
 
 const styles = StyleSheet.create({

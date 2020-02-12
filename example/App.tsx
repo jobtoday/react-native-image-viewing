@@ -60,6 +60,7 @@ export default function App() {
         <Text style={styles.name}>[ react-native-image-viewing ]</Text>
       </View>
       <ImageViewing
+        wrapperStyle={{ top: 10 }}
         images={getImageUrls(images)}
         imageIndex={currentImageIndex}
         visible={isVisible}

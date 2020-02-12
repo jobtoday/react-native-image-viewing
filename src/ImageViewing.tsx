@@ -36,6 +36,7 @@ type Props = {
   doubleTapToZoomEnabled?: boolean;
   HeaderComponent?: ComponentType<{ imageIndex: number }>;
   FooterComponent?: ComponentType<{ imageIndex: number }>;
+  wrapperStyle?: Object;
 };
 
 const DEFAULT_ANIMATION_TYPE = "fade";
@@ -54,7 +55,8 @@ function ImageViewing({
   swipeToCloseEnabled,
   doubleTapToZoomEnabled,
   HeaderComponent,
-  FooterComponent
+  FooterComponent,
+  wrapperStyle
 }: Props) {
   const imageList = React.createRef<VirtualizedList<ImageSource>>();
   const [opacity, onRequestCloseEnhanced] = useRequestClose(onRequestClose);
@@ -87,6 +89,7 @@ function ImageViewing({
       animationType={animationType}
       onRequestClose={onRequestCloseEnhanced}
       supportedOrientations={["portrait"]}
+      wrapperStyle={wrapperStyle}
     >
       <View style={[styles.container, { opacity, backgroundColor }]}>
         <Animated.View style={[styles.header, { transform: headerTransform }]}>
