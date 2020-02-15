@@ -36,6 +36,7 @@ type Props = {
   doubleTapToZoomEnabled?: boolean;
   HeaderComponent?: ComponentType<{ imageIndex: number }>;
   FooterComponent?: ComponentType<{ imageIndex: number }>;
+  hideStatusBar?: boolean;
 };
 
 const DEFAULT_ANIMATION_TYPE = "fade";
