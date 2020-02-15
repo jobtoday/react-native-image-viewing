@@ -48,6 +48,7 @@ function ImageViewing({
   images,
   imageIndex,
   visible,
+  hideStatusBar = true,
   onRequestClose,
   onImageIndexChange,
   animationType = DEFAULT_ANIMATION_TYPE,
@@ -88,6 +89,7 @@ function ImageViewing({
       animationType={animationType}
       onRequestClose={onRequestCloseEnhanced}
       supportedOrientations={["portrait"]}
+      hideStatusBar={hideStatusBar}
     >
       <View style={[styles.container, { opacity, backgroundColor }]}>
         <Animated.View style={[styles.header, { transform: headerTransform }]}>
