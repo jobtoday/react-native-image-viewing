@@ -46,7 +46,7 @@ const Modal = ({
     return null;
   }
 
-  const statusBarHidden = visible && presentationStyle === "overFullScreen";
+  const statusBarHidden = presentationStyle === "overFullScreen";
   const statusBarStateStyle =
     presentationStyle === "overFullScreen"
       ? styles.overFullscreen
