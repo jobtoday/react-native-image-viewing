@@ -62,6 +62,7 @@ export default function App() {
       <ImageViewing
         images={getImageUrls(images)}
         imageIndex={currentImageIndex}
+        presentationStyle="overFullScreen"
         visible={isVisible}
         onRequestClose={onRequestClose}
         HeaderComponent={
