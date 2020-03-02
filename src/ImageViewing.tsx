@@ -12,7 +12,8 @@ import {
   Dimensions,
   StyleSheet,
   View,
-  VirtualizedList
+  VirtualizedList,
+  ModalProps
 } from "react-native";
 
 import Modal from "./components/Modal/Modal";
@@ -30,7 +31,8 @@ type Props = {
   visible: boolean;
   onRequestClose: () => void;
   onImageIndexChange?: (imageIndex: number) => void;
-  animationType?: "none" | "fade" | "slide";
+  presentationStyle?: ModalProps["presentationStyle"];
+  animationType?: ModalProps["animationType"];
   backgroundColor?: string;
   swipeToCloseEnabled?: boolean;
   doubleTapToZoomEnabled?: boolean;
@@ -39,6 +41,7 @@ type Props = {
 };
 
 const DEFAULT_ANIMATION_TYPE = "fade";
+const DEFAULT_PRESENTATION_STYLE = "fullScreen";
 const DEFAULT_BG_COLOR = "#000";
 const SCREEN = Dimensions.get("screen");
 const SCREEN_WIDTH = SCREEN.width;
@@ -51,6 +54,7 @@ function ImageViewing({
   onImageIndexChange,
   animationType = DEFAULT_ANIMATION_TYPE,
   backgroundColor = DEFAULT_BG_COLOR,
+  presentationStyle = DEFAULT_PRESENTATION_STYLE,
   swipeToCloseEnabled,
   doubleTapToZoomEnabled,
   HeaderComponent,
@@ -84,6 +88,7 @@ function ImageViewing({
     <Modal
       transparent
       visible={visible}
+      presentationStyle={presentationStyle}
       animationType={animationType}
       onRequestClose={onRequestCloseEnhanced}
       supportedOrientations={["portrait"]}

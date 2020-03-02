@@ -7,16 +7,24 @@
  */
 
 import React, { useEffect } from "react";
-import { BackHandler, View, StyleSheet, StatusBar } from "react-native";
+import {
+  BackHandler,
+  View,
+  StyleSheet,
+  StatusBar,
+  ModalProps
+} from "react-native";
 
-type Props = {
-  visible: boolean;
-  transparent: boolean;
+type Props = ModalProps & {
   children: JSX.Element;
-  onRequestClose: () => void;
 };
 
-const Modal = ({ visible, children, onRequestClose }: Props) => {
+const Modal = ({
+  visible,
+  children,
+  presentationStyle,
+  onRequestClose
+}: Props) => {
   useEffect(() => {
     const backHandler = BackHandler.addEventListener(
       "hardwareBackPress",
@@ -34,14 +42,34 @@ const Modal = ({ visible, children, onRequestClose }: Props) => {
     };
   }, []);
 
-  return <>{visible && <View style={styles.root}>{children}</View>}</>;
+  if (!visible) {
+    return null;
+  }
+
+  const statusBarHidden = presentationStyle === "overFullScreen";
+  const statusBarStateStyle =
+    presentationStyle === "overFullScreen"
+      ? styles.overFullscreen
+      : styles.defaultStyle;
+
+  return (
+    <>
+      {statusBarHidden && <StatusBar hidden />}
+      <View style={[styles.root, statusBarStateStyle]}>{children}</View>
+    </>
+  );
 };
 
 const styles = StyleSheet.create({
   root: {
     ...StyleSheet.absoluteFillObject,
     zIndex: 1000,
-    backgroundColor: "transparent",
+    backgroundColor: "transparent"
+  },
+  overFullscreen: {
+    top: 0
+  },
+  defaultStyle: {
     top: StatusBar.currentHeight
   }
 });
