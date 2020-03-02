@@ -25,6 +25,10 @@ const Modal = ({
   presentationStyle,
   onRequestClose
 }: Props) => {
+  if (!visible) {
+    return null;
+  }
+
   useEffect(() => {
     const backHandler = BackHandler.addEventListener(
       "hardwareBackPress",
@@ -41,10 +45,6 @@ const Modal = ({
       backHandler.remove();
     };
   }, []);
-
-  if (!visible) {
-    return null;
-  }
 
   const statusBarHidden = presentationStyle === "overFullScreen";
   const statusBarStateStyle =
