@@ -41,9 +41,12 @@ const styles = StyleSheet.create({
     backgroundColor: "#00000077"
   },
   closeText: {
+    lineHeight: 25,
     fontSize: 25,
+    paddingTop: 2,
     textAlign: "center",
-    color: "#FFF"
+    color: "#FFF",
+    includeFontPadding: false
   }
 });
 
