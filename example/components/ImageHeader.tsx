@@ -8,11 +8,11 @@
 
 import React from "react";
 import {
-  SafeAreaView,
   StyleSheet,
+  SafeAreaView,
+  View,
   Text,
-  TouchableOpacity,
-  View
+  TouchableOpacity
 } from "react-native";
 
 type Props = {
@@ -24,44 +24,55 @@ const HIT_SLOP = { top: 16, left: 16, bottom: 16, right: 16 };
 
 const ImageHeader = ({ title, onRequestClose }: Props) => (
   <SafeAreaView style={styles.root}>
-    <View style={styles.space} />
-    {title && <Text style={styles.text}>{title}</Text>}
-    <TouchableOpacity
-      style={styles.closeButton}
-      onPress={onRequestClose}
-      hitSlop={HIT_SLOP}
-    >
-      <Text style={styles.closeText}>✕</Text>
-    </TouchableOpacity>
+    <View style={styles.container}>
+      <View style={styles.space} />
+      {title && <Text style={styles.text}>{title}</Text>}
+      <TouchableOpacity
+        style={styles.closeButton}
+        onPress={onRequestClose}
+        hitSlop={HIT_SLOP}
+      >
+        <Text style={styles.closeText}>✕</Text>
+      </TouchableOpacity>
+    </View>
   </SafeAreaView>
 );
 
 const styles = StyleSheet.create({
   root: {
-    height: 120,
-    width: "100%",
-    backgroundColor: "#00000077",
+    backgroundColor: "#00000077"
+  },
+  container: {
+    flex: 1,
+    padding: 8,
     flexDirection: "row",
-    alignItems: "center",
     justifyContent: "space-between"
   },
   space: {
-    width: 40,
-    height: 40
+    width: 45,
+    height: 45
   },
   closeButton: {
-    marginRight: 20
+    width: 45,
+    height: 45,
+    alignItems: "center",
+    justifyContent: "center"
   },
   closeText: {
-    fontSize: 27,
+    lineHeight: 25,
+    fontSize: 25,
+    paddingTop: 2,
+    includeFontPadding: false,
     color: "#FFF"
   },
   text: {
+    maxWidth: 240,
+    marginTop: 12,
     flex: 1,
     flexWrap: "wrap",
-    maxWidth: 240,
     textAlign: "center",
     fontSize: 17,
+    lineHeight: 17,
     color: "#FFF"
   }
 });

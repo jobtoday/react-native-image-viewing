@@ -32,7 +32,8 @@ const styles = StyleSheet.create({
     alignItems: "flex-end"
   },
   closeButton: {
-    marginRight: 16,
+    marginRight: 8,
+    marginTop: 8,
     width: 45,
     height: 45,
     alignItems: "center",
