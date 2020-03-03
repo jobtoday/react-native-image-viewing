@@ -24,23 +24,27 @@ const HIT_SLOP = { top: 16, left: 16, bottom: 16, right: 16 };
 
 const ImageHeader = ({ title, onRequestClose }: Props) => (
   <SafeAreaView style={styles.root}>
-    <View style={styles.space} />
-    {title && <Text style={styles.text}>{title}</Text>}
-    <TouchableOpacity
-      style={styles.closeButton}
-      onPress={onRequestClose}
-      hitSlop={HIT_SLOP}
-    >
-      <Text style={styles.closeText}>✕</Text>
-    </TouchableOpacity>
+    <View style={styles.container}>
+      <View style={styles.space} />
+      {title && <Text style={styles.text}>{title}</Text>}
+      <TouchableOpacity
+        style={styles.closeButton}
+        onPress={onRequestClose}
+        hitSlop={HIT_SLOP}
+      >
+        <Text style={styles.closeText}>✕</Text>
+      </TouchableOpacity>
+    </View>
   </SafeAreaView>
 );
 
 const styles = StyleSheet.create({
   root: {
-    width: "100%",
+    backgroundColor: "#00000077"
+  },
+  container: {
+    flex: 1,
     padding: 8,
-    backgroundColor: "#00000077",
     flexDirection: "row",
     justifyContent: "space-between"
   },
