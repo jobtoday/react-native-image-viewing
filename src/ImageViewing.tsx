@@ -41,7 +41,6 @@ type Props = {
 };
 
 const DEFAULT_ANIMATION_TYPE = "fade";
-const DEFAULT_PRESENTATION_STYLE = "fullScreen";
 const DEFAULT_BG_COLOR = "#000";
 const SCREEN = Dimensions.get("screen");
 const SCREEN_WIDTH = SCREEN.width;
@@ -54,7 +53,7 @@ function ImageViewing({
   onImageIndexChange,
   animationType = DEFAULT_ANIMATION_TYPE,
   backgroundColor = DEFAULT_BG_COLOR,
-  presentationStyle = DEFAULT_PRESENTATION_STYLE,
+  presentationStyle,
   swipeToCloseEnabled,
   doubleTapToZoomEnabled,
   HeaderComponent,
