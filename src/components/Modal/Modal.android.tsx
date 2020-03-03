@@ -26,7 +26,7 @@ const Modal = ({
   onRequestClose
 }: Props) => {
   useEffect(() => {
-    const backHandler = BackHandler.addEventListener(
+    const backHandler = visible ? BackHandler.addEventListener(
       "hardwareBackPress",
       () => {
         if (typeof onRequestClose === "function") {
@@ -35,12 +35,12 @@ const Modal = ({
 
         return true;
       }
-    );
+    ) : null;
 
     return () => {
-      backHandler.remove();
+      backHandler && backHandler.remove();
     };
-  }, []);
+  }, [visible]);
 
   if (!visible) {
     return null;
