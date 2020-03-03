@@ -8,11 +8,11 @@
 
 import React from "react";
 import {
-  SafeAreaView,
   StyleSheet,
+  SafeAreaView,
+  View,
   Text,
-  TouchableOpacity,
-  View
+  TouchableOpacity
 } from "react-native";
 
 type Props = {
@@ -38,30 +38,37 @@ const ImageHeader = ({ title, onRequestClose }: Props) => (
 
 const styles = StyleSheet.create({
   root: {
-    height: 120,
     width: "100%",
+    padding: 8,
     backgroundColor: "#00000077",
     flexDirection: "row",
-    alignItems: "center",
     justifyContent: "space-between"
   },
   space: {
-    width: 40,
-    height: 40
+    width: 45,
+    height: 45
   },
   closeButton: {
-    marginRight: 20
+    width: 45,
+    height: 45,
+    alignItems: "center",
+    justifyContent: "center"
   },
   closeText: {
-    fontSize: 27,
+    lineHeight: 25,
+    fontSize: 25,
+    paddingTop: 2,
+    includeFontPadding: false,
     color: "#FFF"
   },
   text: {
+    maxWidth: 240,
+    marginTop: 12,
     flex: 1,
     flexWrap: "wrap",
-    maxWidth: 240,
     textAlign: "center",
     fontSize: 17,
+    lineHeight: 17,
     color: "#FFF"
   }
 });
