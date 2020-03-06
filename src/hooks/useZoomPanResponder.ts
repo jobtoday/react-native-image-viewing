@@ -9,14 +9,13 @@
 import { useMemo, useEffect } from "react";
 import {
   Animated,
-  Dimensions,
   GestureResponderEvent,
   GestureResponderHandlers,
   NativeTouchEvent,
   PanResponderGestureState
 } from "react-native";
 
-import { Position } from "../@types";
+import { Position, Dimensions } from "../@types";
 import {
   createPanResponder,
   getDistanceBetweenTouches,
@@ -24,9 +23,6 @@ import {
   getImageDimensionsByTranslate
 } from "../utils";
 
-const SCREEN = Dimensions.get("window");
-const SCREEN_WIDTH = SCREEN.width;
-const SCREEN_HEIGHT = SCREEN.height;
 
 const SCALE_MAX = 2;
 const DOUBLE_TAP_DELAY = 300;
@@ -37,13 +33,15 @@ type Props = {
   initialTranslate: Position;
   onZoom: (isZoomed: boolean) => void;
   doubleTapToZoomEnabled: boolean;
+  layout: Dimensions;
 };
 
 const useZoomPanResponder = ({
   initialScale,
   initialTranslate,
   onZoom,
-  doubleTapToZoomEnabled
+  doubleTapToZoomEnabled,
+  layout,
 }: Props): Readonly<[
   GestureResponderHandlers,
   Animated.Value,
@@ -63,7 +61,7 @@ const useZoomPanResponder = ({
 
   const imageDimensions = getImageDimensionsByTranslate(
     initialTranslate,
-    SCREEN
+    layout
   );
 
   const getBounds = (scale: number) => {
@@ -71,12 +69,12 @@ const useZoomPanResponder = ({
       width: imageDimensions.width * scale,
       height: imageDimensions.height * scale
     };
-    const translateDelta = getImageTranslate(scaledImageDimensions, SCREEN);
+    const translateDelta = getImageTranslate(scaledImageDimensions, layout);
 
     const left = initialTranslate.x - translateDelta.x;
-    const right = left - (scaledImageDimensions.width - SCREEN.width);
+    const right = left - (scaledImageDimensions.width - layout.width);
     const top = initialTranslate.y - translateDelta.y;
-    const bottom = top - (scaledImageDimensions.height - SCREEN.height);
+    const bottom = top - (scaledImageDimensions.height - layout.height);
 
     return [top, left, bottom, right];
   };
@@ -101,9 +99,9 @@ const useZoomPanResponder = ({
   };
 
   const fitsScreenByWidth = () =>
-    imageDimensions.width * currentScale < SCREEN_WIDTH;
+    imageDimensions.width * currentScale < layout.width;
   const fitsScreenByHeight = () =>
-    imageDimensions.height * currentScale < SCREEN_HEIGHT;
+    imageDimensions.height * currentScale < layout.height;
 
   useEffect(() => {
     scaleValue.addListener(({ value }) => {
@@ -142,10 +140,10 @@ const useZoomPanResponder = ({
               {
                 x:
                   initialTranslate.x +
-                  (SCREEN_WIDTH / 2 - touchX) * (targetScale / currentScale),
+                  (layout.width / 2 - touchX) * (targetScale / currentScale),
                 y:
                   initialTranslate.y +
-                  (SCREEN_HEIGHT / 2 - touchY) * (targetScale / currentScale)
+                  (layout.height / 2 - touchY) * (targetScale / currentScale)
               },
               targetScale
             );
