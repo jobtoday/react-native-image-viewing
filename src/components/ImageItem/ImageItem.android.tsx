@@ -13,7 +13,9 @@ import {
   Dimensions,
   StyleSheet,
   NativeScrollEvent,
-  NativeSyntheticEvent
+  NativeSyntheticEvent,
+  TouchableWithoutFeedback,
+  GestureResponderEvent
 } from "react-native";
 
 import useImageDimensions from "../../hooks/useImageDimensions";
@@ -33,6 +35,8 @@ type Props = {
   imageSrc: ImageSource;
   onRequestClose: () => void;
   onZoom: (isZoomed: boolean) => void;
+  onLongPress: (event: GestureResponderEvent, image: ImageSource) => void;
+  delayLongPress: number;
   swipeToCloseEnabled?: boolean;
   doubleTapToZoomEnabled?: boolean;
 };
@@ -41,6 +45,8 @@ const ImageItem = ({
   imageSrc,
   onZoom,
   onRequestClose,
+  onLongPress,
+  delayLongPress,
   swipeToCloseEnabled = true,
   doubleTapToZoomEnabled = true
 }: Props) => {
@@ -101,6 +107,10 @@ const ImageItem = ({
     scrollValueY.setValue(offsetY);
   };
 
+  const onLongPressHandler = (event: GestureResponderEvent) => {
+    onLongPress(event, imageSrc);
+  };
+
   return (
     <Animated.ScrollView
       ref={imageContainer}
@@ -116,12 +126,17 @@ const ImageItem = ({
         onScrollEndDrag
       })}
     >
-      <Animated.Image
-        {...panHandlers}
-        source={imageSrc}
-        style={imageStylesWithOpacity}
-        onLoad={onLoaded}
-      />
+      <TouchableWithoutFeedback
+          onLongPress={onLongPressHandler}
+          delayLongPress={delayLongPress}
+      >
+        <Animated.Image
+          {...panHandlers}
+          source={imageSrc}
+          style={imageStylesWithOpacity}
+          onLoad={onLoaded}
+        />
+      </TouchableWithoutFeedback>
       {(!isLoaded || !imageDimensions) && <ImageLoading />}
     </Animated.ScrollView>
   );
