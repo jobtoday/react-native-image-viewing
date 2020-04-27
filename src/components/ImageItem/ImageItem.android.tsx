@@ -107,9 +107,12 @@ const ImageItem = ({
     scrollValueY.setValue(offsetY);
   };
 
-  const onLongPressHandler = (event: GestureResponderEvent) => {
-    onLongPress(event, imageSrc);
-  };
+  const onLongPressHandler = useCallback(
+    (event: GestureResponderEvent) => {
+      onLongPress(event, imageSrc);
+    },
+    []
+  );
 
   return (
     <Animated.ScrollView
