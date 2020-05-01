@@ -16,8 +16,8 @@ const useImageIndexChange = (imageIndex: number, screen: Dimensions) => {
   const onScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     const {
       nativeEvent: {
-        contentOffset: { x: scrollX }
-      }
+        contentOffset: { x: scrollX },
+      },
     } = event;
 
     if (screen.width) {

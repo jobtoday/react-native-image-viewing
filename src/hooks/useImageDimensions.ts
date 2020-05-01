@@ -19,20 +19,23 @@ const useImageDimensions = (image: ImageSource): Dimensions | null => {
   const [dimensions, setDimensions] = useState<Dimensions | null>(null);
 
   const getImageDimensions = (image: ImageSource): Promise<Dimensions> => {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       const imageDimensions = imageDimensionsCache.get(image.uri);
 
       if (imageDimensions) {
         resolve(imageDimensions);
       } else {
+        // @ts-ignore
         Image.getSizeWithHeaders(
           image.uri,
           image.headers,
+          // @ts-ignore
           (width, height) => {
             imageDimensionsCache.set(image.uri, { width, height });
             resolve({ width, height });
           },
-          error => {
+          // @ts-ignore
+          (error) => {
             console.warn(error);
             resolve({ width: 0, height: 0 });
           }
@@ -44,7 +47,7 @@ const useImageDimensions = (image: ImageSource): Dimensions | null => {
   let isImageUnmounted = false;
 
   useEffect(() => {
-    getImageDimensions(image).then(dimensions => {
+    getImageDimensions(image).then((dimensions) => {
       if (!isImageUnmounted) {
         setDimensions(dimensions);
       }

@@ -29,7 +29,7 @@ const ImageDefaultHeader = ({ onRequestClose }: Props) => (
 
 const styles = StyleSheet.create({
   root: {
-    alignItems: "flex-end"
+    alignItems: "flex-end",
   },
   closeButton: {
     marginRight: 8,
@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 22.5,
-    backgroundColor: "#00000077"
+    backgroundColor: "#00000077",
   },
   closeText: {
     lineHeight: 25,
@@ -47,8 +47,8 @@ const styles = StyleSheet.create({
     paddingTop: 2,
     textAlign: "center",
     color: "#FFF",
-    includeFontPadding: false
-  }
+    includeFontPadding: false,
+  },
 });
 
 export default ImageDefaultHeader;

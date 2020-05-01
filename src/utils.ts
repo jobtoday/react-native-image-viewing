@@ -12,7 +12,7 @@ import {
   PanResponder,
   PanResponderGestureState,
   PanResponderInstance,
-  NativeTouchEvent
+  NativeTouchEvent,
 } from "react-native";
 import { Dimensions, Position } from "./@types";
 
@@ -32,7 +32,7 @@ export const createCache = (cacheSize: number) => ({
     }
 
     this._storage.push({ key, value });
-  }
+  },
 });
 
 export const splitArrayIntoBatches = (arr: any[], batchSize: number): any[] =>
@@ -83,7 +83,7 @@ export const getImageStyles = (
   return {
     width: image.width,
     height: image.height,
-    transform
+    transform,
   };
 };
 
@@ -100,7 +100,7 @@ export const getImageTranslate = (
 
   return {
     x: getTranslateForAxis("x"),
-    y: getTranslateForAxis("y")
+    y: getTranslateForAxis("y"),
   };
 };
 
@@ -109,7 +109,7 @@ export const getImageDimensionsByTranslate = (
   screen: Dimensions
 ): Dimensions => ({
   width: screen.width - translate.x * 2,
-  height: screen.height - translate.y * 2
+  height: screen.height - translate.y * 2,
 });
 
 export const getImageTranslateForScale = (
@@ -124,7 +124,7 @@ export const getImageTranslateForScale = (
 
   const targetImageDimensions = {
     width: width * targetScale,
-    height: height * targetScale
+    height: height * targetScale,
   };
 
   return getImageTranslate(targetImageDimensions, screen);
@@ -146,7 +146,7 @@ export const createPanResponder = ({
   onStart,
   onMove,
   onRelease,
-  onTerminate
+  onTerminate,
 }: PanResponderProps): PanResponderInstance =>
   PanResponder.create({
     onStartShouldSetPanResponder: () => true,
@@ -158,7 +158,7 @@ export const createPanResponder = ({
     onPanResponderRelease: onRelease,
     onPanResponderTerminate: onTerminate,
     onPanResponderTerminationRequest: () => true,
-    onShouldBlockNativeResponder: () => false
+    onShouldBlockNativeResponder: () => false,
   });
 
 export const getDistanceBetweenTouches = (

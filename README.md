@@ -36,14 +36,14 @@ import ImageView from "react-native-image-viewing";
 
 const images = [
   {
-    uri: "https://images.unsplash.com/photo-1571501679680-de32f1e7aad4"
+    uri: "https://images.unsplash.com/photo-1571501679680-de32f1e7aad4",
   },
   {
-    uri: "https://images.unsplash.com/photo-1573273787173-0eb81a833b34"
+    uri: "https://images.unsplash.com/photo-1573273787173-0eb81a833b34",
   },
   {
-    uri: "https://images.unsplash.com/photo-1569569970363-df7b6160d111"
-  }
+    uri: "https://images.unsplash.com/photo-1569569970363-df7b6160d111",
+  },
 ];
 
 const [visible, setIsVisible] = useState(false);
@@ -75,7 +75,7 @@ const [visible, setIsVisible] = useState(false);
 | `HeaderComponent`        | Header component, gets current `imageIndex` as a prop                                               | component, function                                      | false    |
 | `FooterComponent`        | Footer component, gets current `imageIndex` as a prop                                               | component, function                                      | false    |
 
-- ImageSource is an object like { uri: '<http location || file path>' }
+- ImageSource is an object like { uri: '<http location || file path>', headers?: Object }
 
 ## Contributing
 
