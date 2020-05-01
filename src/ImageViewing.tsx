@@ -9,7 +9,6 @@
 import React, { ComponentType, useCallback, useEffect } from "react";
 import {
   Animated,
-  Dimensions,
   StyleSheet,
   View,
   VirtualizedList,
@@ -23,7 +22,7 @@ import ImageDefaultHeader from "./components/ImageDefaultHeader";
 import useAnimatedComponents from "./hooks/useAnimatedComponents";
 import useImageIndexChange from "./hooks/useImageIndexChange";
 import useRequestClose from "./hooks/useRequestClose";
-import { ImageSource } from "./@types";
+import { ImageSource, Dimensions } from "./@types";
 
 type Props = {
   images: ImageSource[];
@@ -42,8 +41,6 @@ type Props = {
 
 const DEFAULT_ANIMATION_TYPE = "fade";
 const DEFAULT_BG_COLOR = "#000";
-const SCREEN = Dimensions.get("screen");
-const SCREEN_WIDTH = SCREEN.width;
 
 function ImageViewing({
   images,
@@ -61,7 +58,8 @@ function ImageViewing({
 }: Props) {
   const imageList = React.createRef<VirtualizedList<ImageSource>>();
   const [opacity, onRequestCloseEnhanced] = useRequestClose(onRequestClose);
-  const [currentImageIndex, onScroll] = useImageIndexChange(imageIndex, SCREEN);
+  const [layout, setLayout] = React.useState<Dimensions>({width: 0, height: 0});
+  const [currentImageIndex, onScroll] = useImageIndexChange(imageIndex, layout);
   const [
     headerTransform,
     footerTransform,
@@ -90,9 +88,14 @@ function ImageViewing({
       presentationStyle={presentationStyle}
       animationType={animationType}
       onRequestClose={onRequestCloseEnhanced}
-      supportedOrientations={["portrait"]}
+      supportedOrientations={["portrait", "portrait-upside-down", "landscape", "landscape-left", "landscape-right"]}
     >
-      <View style={[styles.container, { opacity, backgroundColor }]}>
+      <View
+        style={[styles.container, { opacity, backgroundColor }]}
+        onLayout={(e) => {
+          setLayout(e.nativeEvent.layout);
+        }}
+      >
         <Animated.View style={[styles.header, { transform: headerTransform }]}>
           {typeof HeaderComponent !== "undefined" ? (
             React.createElement(HeaderComponent, {
@@ -116,8 +119,8 @@ function ImageViewing({
           getItem={(_, index) => images[index]}
           getItemCount={() => images.length}
           getItemLayout={(_, index) => ({
-            length: SCREEN_WIDTH,
-            offset: SCREEN_WIDTH * index,
+            length: layout.width,
+            offset: layout.width * index,
             index
           })}
           renderItem={({ item: imageSrc }) => (
@@ -127,6 +130,7 @@ function ImageViewing({
               onRequestClose={onRequestCloseEnhanced}
               swipeToCloseEnabled={swipeToCloseEnabled}
               doubleTapToZoomEnabled={doubleTapToZoomEnabled}
+              layout={layout}
             />
           )}
           onMomentumScrollEnd={onScroll}
