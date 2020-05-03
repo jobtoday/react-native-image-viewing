@@ -12,7 +12,7 @@ import {
   View,
   StyleSheet,
   StatusBar,
-  ModalProps
+  ModalProps,
 } from "react-native";
 
 type Props = ModalProps & {
@@ -23,7 +23,7 @@ const Modal = ({
   visible,
   children,
   presentationStyle,
-  onRequestClose
+  onRequestClose,
 }: Props) => {
   if (!visible) {
     return null;
@@ -64,14 +64,14 @@ const styles = StyleSheet.create({
   root: {
     ...StyleSheet.absoluteFillObject,
     zIndex: 1000,
-    backgroundColor: "transparent"
+    backgroundColor: "transparent",
   },
   overFullscreen: {
-    top: 0
+    top: 0,
   },
   defaultStyle: {
-    top: StatusBar.currentHeight
-  }
+    top: StatusBar.currentHeight,
+  },
 });
 
 export default Modal;

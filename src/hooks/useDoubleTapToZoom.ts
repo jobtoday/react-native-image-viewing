@@ -10,7 +10,7 @@ import React, { useCallback } from "react";
 import {
   ScrollView,
   NativeTouchEvent,
-  NativeSyntheticEvent
+  NativeSyntheticEvent,
 } from "react-native";
 
 import { Dimensions } from "../@types";
@@ -54,7 +54,7 @@ function useDoubleTapToZoom(
           y: targetY,
           width: targetWidth,
           height: targetHeight,
-          animated: true
+          animated: true,
         });
       } else {
         lastTapTS = nowTS;

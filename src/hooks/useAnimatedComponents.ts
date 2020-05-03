@@ -11,7 +11,7 @@ import { Animated } from "react-native";
 const INITIAL_POSITION = { x: 0, y: 0 };
 const ANIMATION_CONFIG = {
   duration: 200,
-  useNativeDriver: true
+  useNativeDriver: true,
 };
 
 const useAnimatedComponents = () => {
@@ -22,18 +22,18 @@ const useAnimatedComponents = () => {
     if (isVisible) {
       Animated.parallel([
         Animated.timing(headerTranslate.y, { ...ANIMATION_CONFIG, toValue: 0 }),
-        Animated.timing(footerTranslate.y, { ...ANIMATION_CONFIG, toValue: 0 })
+        Animated.timing(footerTranslate.y, { ...ANIMATION_CONFIG, toValue: 0 }),
       ]).start();
     } else {
       Animated.parallel([
         Animated.timing(headerTranslate.y, {
           ...ANIMATION_CONFIG,
-          toValue: -300
+          toValue: -300,
         }),
         Animated.timing(footerTranslate.y, {
           ...ANIMATION_CONFIG,
-          toValue: 300
-        })
+          toValue: 300,
+        }),
       ]).start();
     }
   };

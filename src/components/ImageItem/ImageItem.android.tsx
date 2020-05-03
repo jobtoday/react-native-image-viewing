@@ -15,7 +15,7 @@ import {
   NativeScrollEvent,
   NativeSyntheticEvent,
   TouchableWithoutFeedback,
-  GestureResponderEvent
+  GestureResponderEvent,
 } from "react-native";
 
 import useImageDimensions from "../../hooks/useImageDimensions";
@@ -48,9 +48,9 @@ const ImageItem = ({
   onLongPress,
   delayLongPress,
   swipeToCloseEnabled = true,
-  doubleTapToZoomEnabled = true
+  doubleTapToZoomEnabled = true,
 }: Props) => {
-  const imageContainer = React.createRef();
+  const imageContainer = React.createRef<any>();
   const imageDimensions = useImageDimensions(imageSrc);
   const [translate, scale] = getImageTransform(imageDimensions, SCREEN);
   const scrollValueY = new Animated.Value(0);
@@ -62,7 +62,7 @@ const ImageItem = ({
     if (imageContainer?.current) {
       // @ts-ignore
       imageContainer.current.setNativeProps({
-        scrollEnabled: !isZoomed
+        scrollEnabled: !isZoomed,
       });
     }
   };
@@ -71,7 +71,7 @@ const ImageItem = ({
     initialScale: scale || 1,
     initialTranslate: translate || { x: 0, y: 0 },
     onZoom: onZoomPerformed,
-    doubleTapToZoomEnabled
+    doubleTapToZoomEnabled,
   });
 
   const imagesStyles = getImageStyles(
@@ -81,12 +81,12 @@ const ImageItem = ({
   );
   const imageOpacity = scrollValueY.interpolate({
     inputRange: [-SWIPE_CLOSE_OFFSET, 0, SWIPE_CLOSE_OFFSET],
-    outputRange: [0.7, 1, 0.7]
+    outputRange: [0.7, 1, 0.7],
   });
   const imageStylesWithOpacity = { ...imagesStyles, opacity: imageOpacity };
 
   const onScrollEndDrag = ({
-    nativeEvent
+    nativeEvent,
   }: NativeSyntheticEvent<NativeScrollEvent>) => {
     const velocityY = nativeEvent?.velocity?.y ?? 0;
     const offsetY = nativeEvent?.contentOffset?.y ?? 0;
@@ -100,7 +100,7 @@ const ImageItem = ({
   };
 
   const onScroll = ({
-    nativeEvent
+    nativeEvent,
   }: NativeSyntheticEvent<NativeScrollEvent>) => {
     const offsetY = nativeEvent?.contentOffset?.y ?? 0;
 
@@ -126,7 +126,7 @@ const ImageItem = ({
       scrollEnabled={swipeToCloseEnabled}
       {...(swipeToCloseEnabled && {
         onScroll,
-        onScrollEndDrag
+        onScrollEndDrag,
       })}
     >
       <TouchableWithoutFeedback
@@ -148,11 +148,11 @@ const ImageItem = ({
 const styles = StyleSheet.create({
   listItem: {
     width: SCREEN_WIDTH,
-    height: SCREEN_HEIGHT
+    height: SCREEN_HEIGHT,
   },
   imageScrollContainer: {
-    height: SCREEN_HEIGHT * 2
-  }
+    height: SCREEN_HEIGHT * 2,
+  },
 });
 
 export default React.memo(ImageItem);
