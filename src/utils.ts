@@ -157,7 +157,7 @@ export const createPanResponder = ({
     onPanResponderMove: onMove,
     onPanResponderRelease: onRelease,
     onPanResponderTerminate: onTerminate,
-    onPanResponderTerminationRequest: () => true,
+    onPanResponderTerminationRequest: () => false,
     onShouldBlockNativeResponder: () => false,
   });
 
