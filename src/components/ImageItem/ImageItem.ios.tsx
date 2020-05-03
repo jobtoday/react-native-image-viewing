@@ -16,7 +16,7 @@ import {
   View,
   NativeScrollEvent,
   NativeSyntheticEvent,
-  TouchableWithoutFeedback
+  TouchableWithoutFeedback,
 } from "react-native";
 
 import useDoubleTapToZoom from "../../hooks/useDoubleTapToZoom";
@@ -45,7 +45,7 @@ const ImageItem = ({
   onZoom,
   onRequestClose,
   swipeToCloseEnabled = true,
-  doubleTapToZoomEnabled = true
+  doubleTapToZoomEnabled = true,
 }: Props) => {
   const scrollViewRef = useRef<ScrollView>(null);
   const [loaded, setLoaded] = useState(false);
@@ -61,7 +61,7 @@ const ImageItem = ({
 
   const imageOpacity = scrollValueY.interpolate({
     inputRange: [-SWIPE_CLOSE_OFFSET, 0, SWIPE_CLOSE_OFFSET],
-    outputRange: [0.5, 1, 0.5]
+    outputRange: [0.5, 1, 0.5],
   });
   const imagesStyles = getImageStyles(
     imageDimensions,
@@ -90,7 +90,7 @@ const ImageItem = ({
   );
 
   const onScroll = ({
-    nativeEvent
+    nativeEvent,
   }: NativeSyntheticEvent<NativeScrollEvent>) => {
     const offsetY = nativeEvent?.contentOffset?.y ?? 0;
 
@@ -116,7 +116,7 @@ const ImageItem = ({
         onScrollEndDrag={onScrollEndDrag}
         scrollEventThrottle={1}
         {...(swipeToCloseEnabled && {
-          onScroll
+          onScroll,
         })}
       >
         {(!loaded || !imageDimensions) && <ImageLoading />}
@@ -137,11 +137,11 @@ const ImageItem = ({
 const styles = StyleSheet.create({
   listItem: {
     width: SCREEN_WIDTH,
-    height: SCREEN_HEIGHT
+    height: SCREEN_HEIGHT,
   },
   imageScrollContainer: {
-    height: SCREEN_HEIGHT
-  }
+    height: SCREEN_HEIGHT,
+  },
 });
 
 export default React.memo(ImageItem);

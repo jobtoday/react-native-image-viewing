@@ -13,7 +13,7 @@ import {
   StyleSheet,
   View,
   VirtualizedList,
-  ModalProps
+  ModalProps,
 } from "react-native";
 
 import Modal from "./components/Modal/Modal";
@@ -57,7 +57,7 @@ function ImageViewing({
   swipeToCloseEnabled,
   doubleTapToZoomEnabled,
   HeaderComponent,
-  FooterComponent
+  FooterComponent,
 }: Props) {
   const imageList = React.createRef<VirtualizedList<ImageSource>>();
   const [opacity, onRequestCloseEnhanced] = useRequestClose(onRequestClose);
@@ -65,7 +65,7 @@ function ImageViewing({
   const [
     headerTransform,
     footerTransform,
-    toggleBarsVisible
+    toggleBarsVisible,
   ] = useAnimatedComponents();
 
   useEffect(() => {
@@ -96,7 +96,7 @@ function ImageViewing({
         <Animated.View style={[styles.header, { transform: headerTransform }]}>
           {typeof HeaderComponent !== "undefined" ? (
             React.createElement(HeaderComponent, {
-              imageIndex: currentImageIndex
+              imageIndex: currentImageIndex,
             })
           ) : (
             <ImageDefaultHeader onRequestClose={onRequestCloseEnhanced} />
@@ -118,7 +118,7 @@ function ImageViewing({
           getItemLayout={(_, index) => ({
             length: SCREEN_WIDTH,
             offset: SCREEN_WIDTH * index,
-            index
+            index,
           })}
           renderItem={({ item: imageSrc }) => (
             <ImageItem
@@ -130,14 +130,14 @@ function ImageViewing({
             />
           )}
           onMomentumScrollEnd={onScroll}
-          keyExtractor={imageSrc => imageSrc.uri}
+          keyExtractor={(imageSrc) => imageSrc.uri}
         />
         {typeof FooterComponent !== "undefined" && (
           <Animated.View
             style={[styles.footer, { transform: footerTransform }]}
           >
             {React.createElement(FooterComponent, {
-              imageIndex: currentImageIndex
+              imageIndex: currentImageIndex,
             })}
           </Animated.View>
         )}
@@ -149,20 +149,20 @@ function ImageViewing({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#000"
+    backgroundColor: "#000",
   },
   header: {
     position: "absolute",
     width: "100%",
     zIndex: 1,
-    top: 0
+    top: 0,
   },
   footer: {
     position: "absolute",
     width: "100%",
     zIndex: 1,
-    bottom: 0
-  }
+    bottom: 0,
+  },
 });
 
 const EnhancedImageViewing = (props: Props) => (

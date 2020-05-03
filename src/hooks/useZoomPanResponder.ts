@@ -13,7 +13,7 @@ import {
   GestureResponderEvent,
   GestureResponderHandlers,
   NativeTouchEvent,
-  PanResponderGestureState
+  PanResponderGestureState,
 } from "react-native";
 
 import { Position } from "../@types";
@@ -21,7 +21,7 @@ import {
   createPanResponder,
   getDistanceBetweenTouches,
   getImageTranslate,
-  getImageDimensionsByTranslate
+  getImageDimensionsByTranslate,
 } from "../utils";
 
 const SCREEN = Dimensions.get("window");
@@ -43,12 +43,10 @@ const useZoomPanResponder = ({
   initialScale,
   initialTranslate,
   onZoom,
-  doubleTapToZoomEnabled
-}: Props): Readonly<[
-  GestureResponderHandlers,
-  Animated.Value,
-  Animated.ValueXY
-]> => {
+  doubleTapToZoomEnabled,
+}: Props): Readonly<
+  [GestureResponderHandlers, Animated.Value, Animated.ValueXY]
+> => {
   let numberInitialTouches = 1;
   let initialTouches: NativeTouchEvent[] = [];
   let currentScale = initialScale;
@@ -69,7 +67,7 @@ const useZoomPanResponder = ({
   const getBounds = (scale: number) => {
     const scaledImageDimensions = {
       width: imageDimensions.width * scale,
-      height: imageDimensions.height * scale
+      height: imageDimensions.height * scale,
     };
     const translateDelta = getImageTranslate(scaledImageDimensions, SCREEN);
 
@@ -145,7 +143,7 @@ const useZoomPanResponder = ({
                   (SCREEN_WIDTH / 2 - touchX) * (targetScale / currentScale),
                 y:
                   initialTranslate.y +
-                  (SCREEN_HEIGHT / 2 - touchY) * (targetScale / currentScale)
+                  (SCREEN_HEIGHT / 2 - touchY) * (targetScale / currentScale),
               },
               targetScale
             );
@@ -157,18 +155,18 @@ const useZoomPanResponder = ({
             Animated.timing(translateValue.x, {
               toValue: nextTranslate.x,
               duration: 300,
-              useNativeDriver: true
+              useNativeDriver: true,
             }),
             Animated.timing(translateValue.y, {
               toValue: nextTranslate.y,
               duration: 300,
-              useNativeDriver: true
+              useNativeDriver: true,
             }),
             Animated.timing(scaleValue, {
               toValue: nextScale,
               duration: 300,
-              useNativeDriver: true
-            })
+              useNativeDriver: true,
+            }),
           ],
           { stopTogether: false }
         ).start(() => {
@@ -304,7 +302,7 @@ const useZoomPanResponder = ({
           Animated.timing(scaleValue, {
             toValue: tmpScale,
             duration: 100,
-            useNativeDriver: true
+            useNativeDriver: true,
           }).start();
         }
 
@@ -341,19 +339,19 @@ const useZoomPanResponder = ({
           Animated.timing(translateValue.x, {
             toValue: nextTranslateX,
             duration: 100,
-            useNativeDriver: true
+            useNativeDriver: true,
           }),
           Animated.timing(translateValue.y, {
             toValue: nextTranslateY,
             duration: 100,
-            useNativeDriver: true
-          })
+            useNativeDriver: true,
+          }),
         ]).start();
 
         currentTranslate = { x: nextTranslateX, y: nextTranslateY };
         tmpTranslate = null;
       }
-    }
+    },
   };
 
   const panResponder = useMemo(() => createPanResponder(handlers), [handlers]);

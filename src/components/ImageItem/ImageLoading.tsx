@@ -23,15 +23,15 @@ export const ImageLoading = () => (
 const styles = StyleSheet.create({
   listItem: {
     width: SCREEN_WIDTH,
-    height: SCREEN_HEIGHT
+    height: SCREEN_HEIGHT,
   },
   loading: {
     width: SCREEN_WIDTH,
     height: SCREEN_HEIGHT,
     alignItems: "center",
-    justifyContent: "center"
+    justifyContent: "center",
   },
   imageScrollContainer: {
-    height: SCREEN_HEIGHT
-  }
+    height: SCREEN_HEIGHT,
+  },
 });
