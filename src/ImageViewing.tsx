@@ -14,6 +14,7 @@ import {
   View,
   VirtualizedList,
   ModalProps,
+  GestureResponderEvent,
 } from "react-native";
 
 import Modal from "./components/Modal/Modal";
@@ -30,18 +31,21 @@ type Props = {
   imageIndex: number;
   visible: boolean;
   onRequestClose: () => void;
+  onLongPress?: (event: GestureResponderEvent, image: ImageSource) => void;
   onImageIndexChange?: (imageIndex: number) => void;
   presentationStyle?: ModalProps["presentationStyle"];
   animationType?: ModalProps["animationType"];
   backgroundColor?: string;
   swipeToCloseEnabled?: boolean;
   doubleTapToZoomEnabled?: boolean;
+  delayLongPress?: number;
   HeaderComponent?: ComponentType<{ imageIndex: number }>;
   FooterComponent?: ComponentType<{ imageIndex: number }>;
 };
 
 const DEFAULT_ANIMATION_TYPE = "fade";
 const DEFAULT_BG_COLOR = "#000";
+const DEFAULT_DELAY_LONG_PRESS = 800;
 const SCREEN = Dimensions.get("screen");
 const SCREEN_WIDTH = SCREEN.width;
 
@@ -50,12 +54,14 @@ function ImageViewing({
   imageIndex,
   visible,
   onRequestClose,
+  onLongPress = () => {},
   onImageIndexChange,
   animationType = DEFAULT_ANIMATION_TYPE,
   backgroundColor = DEFAULT_BG_COLOR,
   presentationStyle,
   swipeToCloseEnabled,
   doubleTapToZoomEnabled,
+  delayLongPress= DEFAULT_DELAY_LONG_PRESS,
   HeaderComponent,
   FooterComponent,
 }: Props) {
@@ -125,6 +131,8 @@ function ImageViewing({
               onZoom={onZoom}
               imageSrc={imageSrc}
               onRequestClose={onRequestCloseEnhanced}
+              onLongPress={onLongPress}
+              delayLongPress={delayLongPress}
               swipeToCloseEnabled={swipeToCloseEnabled}
               doubleTapToZoomEnabled={doubleTapToZoomEnabled}
             />

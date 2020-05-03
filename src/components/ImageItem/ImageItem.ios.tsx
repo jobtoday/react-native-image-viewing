@@ -17,6 +17,7 @@ import {
   NativeScrollEvent,
   NativeSyntheticEvent,
   TouchableWithoutFeedback,
+  GestureResponderEvent,
 } from "react-native";
 
 import useDoubleTapToZoom from "../../hooks/useDoubleTapToZoom";
@@ -36,6 +37,8 @@ type Props = {
   imageSrc: ImageSource;
   onRequestClose: () => void;
   onZoom: (scaled: boolean) => void;
+  onLongPress: (event: GestureResponderEvent, image: ImageSource) => void;
+  delayLongPress: number;
   swipeToCloseEnabled?: boolean;
   doubleTapToZoomEnabled?: boolean;
 };
@@ -44,6 +47,8 @@ const ImageItem = ({
   imageSrc,
   onZoom,
   onRequestClose,
+  onLongPress,
+  delayLongPress,
   swipeToCloseEnabled = true,
   doubleTapToZoomEnabled = true,
 }: Props) => {
@@ -101,6 +106,13 @@ const ImageItem = ({
     scrollValueY.setValue(offsetY);
   };
 
+  const onLongPressHandler = useCallback(
+    (event: GestureResponderEvent) => {
+      onLongPress(event, imageSrc);
+    },
+    []
+  );
+
   return (
     <View>
       <ScrollView
@@ -122,6 +134,8 @@ const ImageItem = ({
         {(!loaded || !imageDimensions) && <ImageLoading />}
         <TouchableWithoutFeedback
           onPress={doubleTapToZoomEnabled ? handleDoubleTap : undefined}
+          onLongPress={onLongPressHandler}
+          delayLongPress={delayLongPress}
         >
           <Animated.Image
             source={imageSrc}

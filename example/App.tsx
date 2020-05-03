@@ -8,6 +8,7 @@
 
 import React, { useState } from "react";
 import {
+  Alert,
   Platform,
   SafeAreaView,
   StatusBar,
@@ -43,6 +44,9 @@ export default function App() {
   const getImageUrls = memoize((images) =>
     images.map((image) => ({ uri: image.original as string }))
   );
+  const onLongPress = (event, image) => {
+    Alert.alert('Long Pressed', image.uri);
+  };
 
   return (
     <SafeAreaView style={styles.root}>
@@ -65,6 +69,7 @@ export default function App() {
         presentationStyle="overFullScreen"
         visible={isVisible}
         onRequestClose={onRequestClose}
+        onLongPress={onLongPress}
         HeaderComponent={
           images === travel
             ? ({ imageIndex }) => {

@@ -67,6 +67,8 @@ const [visible, setIsVisible] = useState(false);
 | `visible`                | Is modal shown or not                                                                               | boolean                                                  | true     |
 | `onRequestClose`         | Function called to close the modal                                                                  | function                                                 | true     |
 | `onImageIndexChange`     | Function called when image index has been changed                                                   | function                                                 | false    |
+| `onLongPress`            | Function called when image long pressed                                                             | function (event: GestureResponderEvent, image: ImageSource) | false    |
+| `delayLongPress`         | Delay in ms, before onLongPress is called: default `800`                                            | number                                                   | false    |
 | `animationType`          | Animation modal presented with: default `fade`                                                      | `none`, `fade`, `slide`                                  | false    |
 | `presentationStyle`      | Modal presentation style: default: `fullScreen` **Android:** Use `overFullScreen` to hide StatusBar | `fullScreen`, `pageSheet`, `formSheet`, `overFullScreen` | false    |
 | `backgroundColor`        | Background color of the modal in HEX (#000000EE)                                                    | string                                                   | false    |
