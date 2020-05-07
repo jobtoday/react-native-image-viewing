@@ -6,7 +6,7 @@
  *
  */
 
-import { useMemo, useEffect } from "react";
+import { useMemo, useEffect, useRef } from "react";
 import {
   Animated,
   Dimensions,
@@ -27,6 +27,7 @@ import {
 const SCREEN = Dimensions.get("window");
 const SCREEN_WIDTH = SCREEN.width;
 const SCREEN_HEIGHT = SCREEN.height;
+const MIN_DIMENSION = Math.min(SCREEN_WIDTH, SCREEN_HEIGHT);
 
 const SCALE_MAX = 2;
 const DOUBLE_TAP_DELAY = 300;
@@ -37,13 +38,17 @@ type Props = {
   initialTranslate: Position;
   onZoom: (isZoomed: boolean) => void;
   doubleTapToZoomEnabled: boolean;
+  onLongPress: () => void;
+  delayLongPress: number;
 };
 
-const useZoomPanResponder = ({
+const usePanResponder = ({
   initialScale,
   initialTranslate,
   onZoom,
   doubleTapToZoomEnabled,
+  onLongPress,
+  delayLongPress,
 }: Props): Readonly<
   [GestureResponderHandlers, Animated.Value, Animated.ValueXY]
 > => {
@@ -55,7 +60,9 @@ const useZoomPanResponder = ({
   let tmpTranslate: Position | null = null;
   let isDoubleTapPerformed = false;
   let lastTapTS: number | null = null;
+  let longPressHandlerRef: number | null = null;
 
+  const meaningfulShift = MIN_DIMENSION * 0.01;
   const scaleValue = new Animated.Value(initialScale);
   const translateValue = new Animated.ValueXY(initialTranslate);
 
@@ -113,7 +120,21 @@ const useZoomPanResponder = ({
     return () => scaleValue.removeAllListeners();
   });
 
+  const cancelLongPressHandle = () => {
+    longPressHandlerRef && clearTimeout(longPressHandlerRef);
+  };
+
   const handlers = {
+    onGrant: (
+      _: GestureResponderEvent,
+      gestureState: PanResponderGestureState
+    ) => {
+      numberInitialTouches = gestureState.numberActiveTouches;
+
+      if (gestureState.numberActiveTouches > 1) return;
+
+      longPressHandlerRef = setTimeout(onLongPress, delayLongPress);
+    },
     onStart: (
       event: GestureResponderEvent,
       gestureState: PanResponderGestureState
@@ -125,6 +146,7 @@ const useZoomPanResponder = ({
 
       const tapTS = Date.now();
       // Handle double tap event by calculating diff between first and second taps timestamps
+
       isDoubleTapPerformed = Boolean(
         lastTapTS && tapTS - lastTapTS < DOUBLE_TAP_DELAY
       );
@@ -183,8 +205,17 @@ const useZoomPanResponder = ({
       event: GestureResponderEvent,
       gestureState: PanResponderGestureState
     ) => {
+      const { dx, dy } = gestureState;
+
+      if (Math.abs(dx) >= meaningfulShift || Math.abs(dy) >= meaningfulShift) {
+        cancelLongPressHandle();
+      }
+
       // Don't need to handle move because double tap in progress (was handled in onStart)
-      if (doubleTapToZoomEnabled && isDoubleTapPerformed) return;
+      if (doubleTapToZoomEnabled && isDoubleTapPerformed) {
+        cancelLongPressHandle();
+        return;
+      }
 
       if (
         numberInitialTouches === 1 &&
@@ -200,6 +231,8 @@ const useZoomPanResponder = ({
         numberInitialTouches === 2 && gestureState.numberActiveTouches === 2;
 
       if (isPinchGesture) {
+        cancelLongPressHandle();
+
         const initialDistance = getDistanceBetweenTouches(initialTouches);
         const currentDistance = getDistanceBetweenTouches(
           event.nativeEvent.touches
@@ -292,6 +325,8 @@ const useZoomPanResponder = ({
       }
     },
     onRelease: () => {
+      cancelLongPressHandle();
+
       if (isDoubleTapPerformed) {
         isDoubleTapPerformed = false;
       }
@@ -359,4 +394,4 @@ const useZoomPanResponder = ({
   return [panResponder.panHandlers, scaleValue, translateValue];
 };
 
-export default useZoomPanResponder;
+export default usePanResponder;

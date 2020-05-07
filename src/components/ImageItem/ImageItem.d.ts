@@ -14,7 +14,7 @@ declare type Props = {
   imageSrc: ImageSource;
   onRequestClose: () => void;
   onZoom: (isZoomed: boolean) => void;
-  onLongPress: (event: GestureResponderEvent, image: ImageSource) => void;
+  onLongPress: (image: ImageSource) => void;
   delayLongPress: number;
   swipeToCloseEnabled?: boolean;
   doubleTapToZoomEnabled?: boolean;
@@ -26,7 +26,7 @@ declare const _default: React.MemoExoticComponent<({
   onRequestClose,
   onLongPress,
   delayLongPress,
-  swipeToCloseEnabled
+  swipeToCloseEnabled,
 }: Props) => JSX.Element>;
 
 export default _default;

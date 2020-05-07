@@ -31,7 +31,7 @@ type Props = {
   imageIndex: number;
   visible: boolean;
   onRequestClose: () => void;
-  onLongPress?: (event: GestureResponderEvent, image: ImageSource) => void;
+  onLongPress?: (image: ImageSource) => void;
   onImageIndexChange?: (imageIndex: number) => void;
   presentationStyle?: ModalProps["presentationStyle"];
   animationType?: ModalProps["animationType"];
@@ -61,7 +61,7 @@ function ImageViewing({
   presentationStyle,
   swipeToCloseEnabled,
   doubleTapToZoomEnabled,
-  delayLongPress= DEFAULT_DELAY_LONG_PRESS,
+  delayLongPress = DEFAULT_DELAY_LONG_PRESS,
   HeaderComponent,
   FooterComponent,
 }: Props) {
