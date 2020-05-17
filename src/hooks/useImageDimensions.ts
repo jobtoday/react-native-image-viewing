@@ -20,16 +20,26 @@ const useImageDimensions = (image: ImageSource): Dimensions | null => {
 
   const getImageDimensions = (image: ImageSource): Promise<Dimensions> => {
     return new Promise((resolve) => {
+      if (typeof image == "number") {
+        const cacheKey = `${image}`;
+        const imageDimensions = imageDimensionsCache.get(cacheKey);
+
+        if (imageDimensions) {
+          resolve(imageDimensions);
+        } else {
+          const dimensions = Image.resolveAssetSource(image);
+          imageDimensionsCache.set(cacheKey, dimensions);
+          resolve(dimensions);
+        }
+
+        return;
+      }
+
       // @ts-ignore
       if (image.uri) {
         const source = image as ImageURISource;
 
-        if (!source.uri) {
-          resolve({ width: 0, height: 0 });
-          return;
-        }
-
-        const cacheKey = source.uri;
+        const cacheKey = source.uri as string;
 
         const imageDimensions = imageDimensionsCache.get(cacheKey);
 
@@ -49,18 +59,8 @@ const useImageDimensions = (image: ImageSource): Dimensions | null => {
             }
           );
         }
-      }
-      if (typeof image == "number") {
-        const cacheKey = `${image}`;
-        const imageDimensions = imageDimensionsCache.get(cacheKey);
-
-        if (imageDimensions) {
-          resolve(imageDimensions);
-        } else {
-          const { width, height } = Image.resolveAssetSource(image);
-          console.warn("get dims", { width, height });
-          imageDimensionsCache.set(cacheKey, { width, height });
-        }
+      } else {
+        resolve({ width: 0, height: 0 });
       }
     });
   };
