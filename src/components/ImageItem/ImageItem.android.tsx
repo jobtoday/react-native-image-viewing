@@ -96,8 +96,9 @@ const ImageItem = ({
     const offsetY = nativeEvent?.contentOffset?.y ?? 0;
 
     if (
-      Math.abs(velocityY) > SWIPE_CLOSE_VELOCITY &&
-      offsetY > SWIPE_CLOSE_OFFSET
+      (Math.abs(velocityY) > SWIPE_CLOSE_VELOCITY &&
+        offsetY > SWIPE_CLOSE_OFFSET) ||
+      offsetY > SCREEN_HEIGHT / 2
     ) {
       onRequestClose();
     }
