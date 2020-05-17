@@ -57,7 +57,6 @@ const useBackHandler = (visible?: boolean, onRequestClose?: () => void) => {
 
   useEffect(
     () => () => {
-      console.warn("unmount");
       BackHandler.removeEventListener("hardwareBackPress", backHandler);
     },
     []
@@ -65,10 +64,8 @@ const useBackHandler = (visible?: boolean, onRequestClose?: () => void) => {
 
   useEffect(() => {
     if (visible) {
-      console.warn("add");
       BackHandler.addEventListener("hardwareBackPress", backHandler);
     } else {
-      console.warn("remove");
       BackHandler.removeEventListener("hardwareBackPress", backHandler);
     }
   }, [visible]);
