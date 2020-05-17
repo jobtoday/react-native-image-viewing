@@ -14,7 +14,6 @@ import {
   View,
   VirtualizedList,
   ModalProps,
-  GestureResponderEvent,
 } from "react-native";
 
 import Modal from "./components/Modal/Modal";
