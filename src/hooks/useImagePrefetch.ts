@@ -12,7 +12,13 @@ import { ImageSource } from "../@types";
 
 const useImagePrefetch = (images: ImageSource[]) => {
   useEffect(() => {
-    images.forEach((image) => Image.prefetch(image.uri));
+    images.forEach((image) => {
+      //@ts-ignore
+      if (image.uri) {
+        //@ts-ignore
+        return Image.prefetch(image.uri);
+      }
+    });
   }, []);
 };
 

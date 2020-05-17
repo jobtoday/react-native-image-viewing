@@ -7,7 +7,7 @@
  */
 
 import { useEffect, useState } from "react";
-import { Image } from "react-native";
+import { Image, ImageURISource } from "react-native";
 
 import { createCache } from "../utils";
 import { Dimensions, ImageSource } from "../@types";
@@ -20,25 +20,47 @@ const useImageDimensions = (image: ImageSource): Dimensions | null => {
 
   const getImageDimensions = (image: ImageSource): Promise<Dimensions> => {
     return new Promise((resolve) => {
-      const imageDimensions = imageDimensionsCache.get(image.uri);
+      // @ts-ignore
+      if (image.uri) {
+        const source = image as ImageURISource;
 
-      if (imageDimensions) {
-        resolve(imageDimensions);
-      } else {
-        // @ts-ignore
-        Image.getSizeWithHeaders(
-          image.uri,
-          image.headers,
+        if (!source.uri) {
+          resolve({ width: 0, height: 0 });
+          return;
+        }
+
+        const cacheKey = source.uri;
+
+        const imageDimensions = imageDimensionsCache.get(cacheKey);
+
+        if (imageDimensions) {
+          resolve(imageDimensions);
+        } else {
           // @ts-ignore
-          (width, height) => {
-            imageDimensionsCache.set(image.uri, { width, height });
-            resolve({ width, height });
-          },
-          // @ts-ignore
-          (error) => {
-            resolve({ width: 0, height: 0 });
-          }
-        );
+          Image.getSizeWithHeaders(
+            source.uri,
+            source.headers,
+            (width: number, height: number) => {
+              imageDimensionsCache.set(cacheKey, { width, height });
+              resolve({ width, height });
+            },
+            () => {
+              resolve({ width: 0, height: 0 });
+            }
+          );
+        }
+      }
+      if (typeof image == "number") {
+        const cacheKey = `${image}`;
+        const imageDimensions = imageDimensionsCache.get(cacheKey);
+
+        if (imageDimensions) {
+          resolve(imageDimensions);
+        } else {
+          const { width, height } = Image.resolveAssetSource(image);
+          console.warn("get dims", { width, height });
+          imageDimensionsCache.set(cacheKey, { width, height });
+        }
       }
     });
   };
