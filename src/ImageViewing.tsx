@@ -61,7 +61,7 @@ function ImageViewing({
   presentationStyle,
   swipeToCloseEnabled,
   doubleTapToZoomEnabled,
-  delayLongPress= DEFAULT_DELAY_LONG_PRESS,
+  delayLongPress = DEFAULT_DELAY_LONG_PRESS,
   HeaderComponent,
   FooterComponent,
 }: Props) {

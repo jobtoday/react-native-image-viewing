@@ -6,7 +6,7 @@
  *
  */
 
-import React, { useEffect } from "react";
+import React, { useEffect, useCallback } from "react";
 import {
   BackHandler,
   View,
@@ -25,32 +25,17 @@ const Modal = ({
   presentationStyle,
   onRequestClose,
 }: Props) => {
-  if (!visible) {
-    return null;
-  }
-
-  useEffect(() => {
-    const backHandler = BackHandler.addEventListener(
-      "hardwareBackPress",
-      () => {
-        if (typeof onRequestClose === "function") {
-          onRequestClose();
-        }
-
-        return true;
-      }
-    );
-
-    return () => {
-      backHandler.remove();
-    };
-  }, []);
-
   const statusBarHidden = presentationStyle === "overFullScreen";
   const statusBarStateStyle =
     presentationStyle === "overFullScreen"
       ? styles.overFullscreen
       : styles.defaultStyle;
+
+  useBackHandler(visible, onRequestClose);
+
+  if (!visible) {
+    return null;
+  }
 
   return (
     <>
@@ -58,6 +43,35 @@ const Modal = ({
       <View style={[styles.root, statusBarStateStyle]}>{children}</View>
     </>
   );
+};
+
+const useBackHandler = (visible?: boolean, onRequestClose?: () => void) => {
+  const backHandler = useCallback(() => {
+    if (typeof onRequestClose === "function") {
+      onRequestClose();
+      return true;
+    }
+
+    return false;
+  }, []);
+
+  useEffect(
+    () => () => {
+      console.warn("unmount");
+      BackHandler.removeEventListener("hardwareBackPress", backHandler);
+    },
+    []
+  );
+
+  useEffect(() => {
+    if (visible) {
+      console.warn("add");
+      BackHandler.addEventListener("hardwareBackPress", backHandler);
+    } else {
+      console.warn("remove");
+      BackHandler.removeEventListener("hardwareBackPress", backHandler);
+    }
+  }, [visible]);
 };
 
 const styles = StyleSheet.create({
