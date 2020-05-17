@@ -37,7 +37,7 @@ type Props = {
   imageSrc: ImageSource;
   onRequestClose: () => void;
   onZoom: (scaled: boolean) => void;
-  onLongPress: (event: GestureResponderEvent, image: ImageSource) => void;
+  onLongPress: (image: ImageSource) => void;
   delayLongPress: number;
   swipeToCloseEnabled?: boolean;
   doubleTapToZoomEnabled?: boolean;
@@ -108,9 +108,9 @@ const ImageItem = ({
 
   const onLongPressHandler = useCallback(
     (event: GestureResponderEvent) => {
-      onLongPress(event, imageSrc);
+      onLongPress(imageSrc);
     },
-    []
+    [imageSrc, onLongPress]
   );
 
   return (

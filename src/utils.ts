@@ -136,6 +136,7 @@ type HandlerType = (
 ) => void;
 
 type PanResponderProps = {
+  onGrant: HandlerType;
   onStart?: HandlerType;
   onMove: HandlerType;
   onRelease?: HandlerType;
@@ -143,6 +144,7 @@ type PanResponderProps = {
 };
 
 export const createPanResponder = ({
+  onGrant,
   onStart,
   onMove,
   onRelease,
@@ -153,6 +155,7 @@ export const createPanResponder = ({
     onStartShouldSetPanResponderCapture: () => true,
     onMoveShouldSetPanResponder: () => true,
     onMoveShouldSetPanResponderCapture: () => true,
+    onPanResponderGrant: onGrant,
     onPanResponderStart: onStart,
     onPanResponderMove: onMove,
     onPanResponderRelease: onRelease,

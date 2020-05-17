@@ -36,7 +36,6 @@ const useImageDimensions = (image: ImageSource): Dimensions | null => {
           },
           // @ts-ignore
           (error) => {
-            console.warn(error);
             resolve({ width: 0, height: 0 });
           }
         );

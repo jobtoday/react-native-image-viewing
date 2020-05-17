@@ -44,8 +44,8 @@ export default function App() {
   const getImageUrls = memoize((images) =>
     images.map((image) => ({ uri: image.original as string }))
   );
-  const onLongPress = (event, image) => {
-    Alert.alert('Long Pressed', image.uri);
+  const onLongPress = (image) => {
+    Alert.alert("Long Pressed", image.uri);
   };
 
   return (

@@ -14,12 +14,10 @@ import {
   StyleSheet,
   NativeScrollEvent,
   NativeSyntheticEvent,
-  TouchableWithoutFeedback,
-  GestureResponderEvent,
 } from "react-native";
 
 import useImageDimensions from "../../hooks/useImageDimensions";
-import useZoomPanResponder from "../../hooks/useZoomPanResponder";
+import usePanResponder from "../../hooks/usePanResponder";
 
 import { getImageStyles, getImageTransform } from "../../utils";
 import { ImageSource } from "../../@types";
@@ -35,7 +33,7 @@ type Props = {
   imageSrc: ImageSource;
   onRequestClose: () => void;
   onZoom: (isZoomed: boolean) => void;
-  onLongPress: (event: GestureResponderEvent, image: ImageSource) => void;
+  onLongPress: (image: ImageSource) => void;
   delayLongPress: number;
   swipeToCloseEnabled?: boolean;
   doubleTapToZoomEnabled?: boolean;
@@ -67,11 +65,17 @@ const ImageItem = ({
     }
   };
 
-  const [panHandlers, scaleValue, translateValue] = useZoomPanResponder({
+  const onLongPressHandler = useCallback(() => {
+    onLongPress(imageSrc);
+  }, [imageSrc, onLongPress]);
+
+  const [panHandlers, scaleValue, translateValue] = usePanResponder({
     initialScale: scale || 1,
     initialTranslate: translate || { x: 0, y: 0 },
     onZoom: onZoomPerformed,
     doubleTapToZoomEnabled,
+    onLongPress: onLongPressHandler,
+    delayLongPress,
   });
 
   const imagesStyles = getImageStyles(
@@ -107,13 +111,6 @@ const ImageItem = ({
     scrollValueY.setValue(offsetY);
   };
 
-  const onLongPressHandler = useCallback(
-    (event: GestureResponderEvent) => {
-      onLongPress(event, imageSrc);
-    },
-    []
-  );
-
   return (
     <Animated.ScrollView
       ref={imageContainer}
@@ -129,17 +126,12 @@ const ImageItem = ({
         onScrollEndDrag,
       })}
     >
-      <TouchableWithoutFeedback
-          onLongPress={onLongPressHandler}
-          delayLongPress={delayLongPress}
-      >
-        <Animated.Image
-          {...panHandlers}
-          source={imageSrc}
-          style={imageStylesWithOpacity}
-          onLoad={onLoaded}
-        />
-      </TouchableWithoutFeedback>
+      <Animated.Image
+        {...panHandlers}
+        source={imageSrc}
+        style={imageStylesWithOpacity}
+        onLoad={onLoaded}
+      />
       {(!isLoaded || !imageDimensions) && <ImageLoading />}
     </Animated.ScrollView>
   );
