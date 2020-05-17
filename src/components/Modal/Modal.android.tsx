@@ -6,14 +6,9 @@
  *
  */
 
-import React, { useEffect } from "react";
-import {
-  BackHandler,
-  View,
-  StyleSheet,
-  StatusBar,
-  ModalProps,
-} from "react-native";
+import React from "react";
+import { View, StyleSheet, StatusBar, ModalProps } from "react-native";
+import useBackHandler from "../../hooks/useBackHandler";
 
 type Props = ModalProps & {
   children: JSX.Element;
@@ -25,32 +20,17 @@ const Modal = ({
   presentationStyle,
   onRequestClose,
 }: Props) => {
-  if (!visible) {
-    return null;
-  }
-
-  useEffect(() => {
-    const backHandler = BackHandler.addEventListener(
-      "hardwareBackPress",
-      () => {
-        if (typeof onRequestClose === "function") {
-          onRequestClose();
-        }
-
-        return true;
-      }
-    );
-
-    return () => {
-      backHandler.remove();
-    };
-  }, []);
-
   const statusBarHidden = presentationStyle === "overFullScreen";
   const statusBarStateStyle =
     presentationStyle === "overFullScreen"
       ? styles.overFullscreen
       : styles.defaultStyle;
+
+  useBackHandler(visible, onRequestClose);
+
+  if (!visible) {
+    return null;
+  }
 
   return (
     <>
