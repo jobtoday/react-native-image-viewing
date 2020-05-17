@@ -6,14 +6,9 @@
  *
  */
 
-import React, { useEffect, useCallback } from "react";
-import {
-  BackHandler,
-  View,
-  StyleSheet,
-  StatusBar,
-  ModalProps,
-} from "react-native";
+import React from "react";
+import { View, StyleSheet, StatusBar, ModalProps } from "react-native";
+import useBackHandler from "../../hooks/useBackHandler";
 
 type Props = ModalProps & {
   children: JSX.Element;
@@ -43,32 +38,6 @@ const Modal = ({
       <View style={[styles.root, statusBarStateStyle]}>{children}</View>
     </>
   );
-};
-
-const useBackHandler = (visible?: boolean, onRequestClose?: () => void) => {
-  const backHandler = useCallback(() => {
-    if (typeof onRequestClose === "function") {
-      onRequestClose();
-      return true;
-    }
-
-    return false;
-  }, []);
-
-  useEffect(
-    () => () => {
-      BackHandler.removeEventListener("hardwareBackPress", backHandler);
-    },
-    []
-  );
-
-  useEffect(() => {
-    if (visible) {
-      BackHandler.addEventListener("hardwareBackPress", backHandler);
-    } else {
-      BackHandler.removeEventListener("hardwareBackPress", backHandler);
-    }
-  }, [visible]);
 };
 
 const styles = StyleSheet.create({
