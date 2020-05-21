@@ -22,15 +22,15 @@ const useImageDimensions = (image: ImageSource): Dimensions | null => {
     return new Promise((resolve) => {
       if (typeof image == "number") {
         const cacheKey = `${image}`;
-        const imageDimensions = imageDimensionsCache.get(cacheKey);
+        let imageDimensions = imageDimensionsCache.get(cacheKey);
 
-        if (imageDimensions) {
-          resolve(imageDimensions);
-        } else {
-          const dimensions = Image.resolveAssetSource(image);
-          imageDimensionsCache.set(cacheKey, dimensions);
-          resolve(dimensions);
+        if (!imageDimensions) {
+          const { width, height } = Image.resolveAssetSource(image);
+          imageDimensions = { width, height };
+          imageDimensionsCache.set(cacheKey, imageDimensions);
         }
+
+        resolve(imageDimensions);
 
         return;
       }

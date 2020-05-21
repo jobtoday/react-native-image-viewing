@@ -44,7 +44,11 @@ export default function App() {
 
   const onRequestClose = () => setIsVisible(false);
   const getImageSource = memoize((images): ImageSource[] =>
-    images.map((image) => ({ uri: image.original as string }))
+    images.map((image) =>
+      typeof image.original === "number"
+        ? image.original
+        : { uri: image.original as string }
+    )
   );
   const onLongPress = (image) => {
     Alert.alert("Long Pressed", image.uri);
