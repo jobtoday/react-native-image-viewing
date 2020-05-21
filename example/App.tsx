@@ -29,6 +29,8 @@ import { travel } from "./data/travel";
 import { city } from "./data/city";
 import { food } from "./data/food";
 
+import { ImageSource } from "../src/@types";
+
 export default function App() {
   const [currentImageIndex, setImageIndex] = useState(0);
   const [images, setImages] = useState(architecture);
@@ -41,8 +43,12 @@ export default function App() {
   };
 
   const onRequestClose = () => setIsVisible(false);
-  const getImageUrls = memoize((images) =>
-    images.map((image) => ({ uri: image.original as string }))
+  const getImageSource = memoize((images): ImageSource[] =>
+    images.map((image) =>
+      typeof image.original === "number"
+        ? image.original
+        : { uri: image.original as string }
+    )
   );
   const onLongPress = (image) => {
     Alert.alert("Long Pressed", image.uri);
@@ -64,7 +70,7 @@ export default function App() {
         <Text style={styles.name}>[ react-native-image-viewing ]</Text>
       </View>
       <ImageViewing
-        images={getImageUrls(images)}
+        images={getImageSource(images)}
         imageIndex={currentImageIndex}
         presentationStyle="overFullScreen"
         visible={isVisible}

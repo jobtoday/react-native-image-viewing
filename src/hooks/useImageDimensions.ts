@@ -7,7 +7,7 @@
  */
 
 import { useEffect, useState } from "react";
-import { Image } from "react-native";
+import { Image, ImageURISource } from "react-native";
 
 import { createCache } from "../utils";
 import { Dimensions, ImageSource } from "../@types";
@@ -20,25 +20,47 @@ const useImageDimensions = (image: ImageSource): Dimensions | null => {
 
   const getImageDimensions = (image: ImageSource): Promise<Dimensions> => {
     return new Promise((resolve) => {
-      const imageDimensions = imageDimensionsCache.get(image.uri);
+      if (typeof image == "number") {
+        const cacheKey = `${image}`;
+        let imageDimensions = imageDimensionsCache.get(cacheKey);
 
-      if (imageDimensions) {
+        if (!imageDimensions) {
+          const { width, height } = Image.resolveAssetSource(image);
+          imageDimensions = { width, height };
+          imageDimensionsCache.set(cacheKey, imageDimensions);
+        }
+
         resolve(imageDimensions);
+
+        return;
+      }
+
+      // @ts-ignore
+      if (image.uri) {
+        const source = image as ImageURISource;
+
+        const cacheKey = source.uri as string;
+
+        const imageDimensions = imageDimensionsCache.get(cacheKey);
+
+        if (imageDimensions) {
+          resolve(imageDimensions);
+        } else {
+          // @ts-ignore
+          Image.getSizeWithHeaders(
+            source.uri,
+            source.headers,
+            (width: number, height: number) => {
+              imageDimensionsCache.set(cacheKey, { width, height });
+              resolve({ width, height });
+            },
+            () => {
+              resolve({ width: 0, height: 0 });
+            }
+          );
+        }
       } else {
-        // @ts-ignore
-        Image.getSizeWithHeaders(
-          image.uri,
-          image.headers,
-          // @ts-ignore
-          (width, height) => {
-            imageDimensionsCache.set(image.uri, { width, height });
-            resolve({ width, height });
-          },
-          // @ts-ignore
-          (error) => {
-            resolve({ width: 0, height: 0 });
-          }
-        );
+        resolve({ width: 0, height: 0 });
       }
     });
   };

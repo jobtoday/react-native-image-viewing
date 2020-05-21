@@ -137,7 +137,8 @@ function ImageViewing({
             />
           )}
           onMomentumScrollEnd={onScroll}
-          keyExtractor={(imageSrc) => imageSrc.uri}
+          //@ts-ignore
+          keyExtractor={(imageSrc) => imageSrc.uri || `${imageSrc}`}
         />
         {typeof FooterComponent !== "undefined" && (
           <Animated.View
