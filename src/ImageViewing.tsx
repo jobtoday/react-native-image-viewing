@@ -14,11 +14,12 @@ import {
   View,
   VirtualizedList,
   ModalProps,
+  Modal,
 } from "react-native";
 
-import Modal from "./components/Modal/Modal";
 import ImageItem from "./components/ImageItem/ImageItem";
 import ImageDefaultHeader from "./components/ImageDefaultHeader";
+import StatusBarManager from "./components/StatusBarManager";
 
 import useAnimatedComponents from "./hooks/useAnimatedComponents";
 import useImageIndexChange from "./hooks/useImageIndexChange";
@@ -85,27 +86,35 @@ function ImageViewing({
       imageList?.current?.setNativeProps({ scrollEnabled: !isScaled });
       toggleBarsVisible(!isScaled);
     },
-    [imageList]
+    [imageList],
   );
+
+  if (!visible) {
+    return null;
+  }
 
   return (
     <Modal
-      transparent
+      transparent={presentationStyle === "overFullScreen"}
       visible={visible}
       presentationStyle={presentationStyle}
       animationType={animationType}
       onRequestClose={onRequestCloseEnhanced}
       supportedOrientations={["portrait"]}
+      hardwareAccelerated
     >
+      <StatusBarManager presentationStyle={presentationStyle} />
       <View style={[styles.container, { opacity, backgroundColor }]}>
         <Animated.View style={[styles.header, { transform: headerTransform }]}>
-          {typeof HeaderComponent !== "undefined" ? (
-            React.createElement(HeaderComponent, {
-              imageIndex: currentImageIndex,
-            })
-          ) : (
-            <ImageDefaultHeader onRequestClose={onRequestCloseEnhanced} />
-          )}
+          {typeof HeaderComponent !== "undefined"
+            ? (
+              React.createElement(HeaderComponent, {
+                imageIndex: currentImageIndex,
+              })
+            )
+            : (
+              <ImageDefaultHeader onRequestClose={onRequestCloseEnhanced} />
+            )}
         </Animated.View>
         <VirtualizedList
           ref={imageList}
