@@ -8,7 +8,6 @@
 
 import React, { ComponentType, useCallback, useEffect } from "react";
 import {
-  Platform,
   Animated,
   Dimensions,
   StyleSheet,
@@ -16,11 +15,11 @@ import {
   VirtualizedList,
   ModalProps,
   Modal,
-  StatusBar,
 } from "react-native";
 
 import ImageItem from "./components/ImageItem/ImageItem";
 import ImageDefaultHeader from "./components/ImageDefaultHeader";
+import StatusBarManager from "./components/StatusBarManager";
 
 import useAnimatedComponents from "./hooks/useAnimatedComponents";
 import useImageIndexChange from "./hooks/useImageIndexChange";
@@ -87,7 +86,7 @@ function ImageViewing({
       imageList?.current?.setNativeProps({ scrollEnabled: !isScaled });
       toggleBarsVisible(!isScaled);
     },
-    [imageList]
+    [imageList],
   );
 
   if (!visible) {
@@ -107,13 +106,15 @@ function ImageViewing({
       <StatusBarManager presentationStyle={presentationStyle} />
       <View style={[styles.container, { opacity, backgroundColor }]}>
         <Animated.View style={[styles.header, { transform: headerTransform }]}>
-          {typeof HeaderComponent !== "undefined" ? (
-            React.createElement(HeaderComponent, {
-              imageIndex: currentImageIndex,
-            })
-          ) : (
-            <ImageDefaultHeader onRequestClose={onRequestCloseEnhanced} />
-          )}
+          {typeof HeaderComponent !== "undefined"
+            ? (
+              React.createElement(HeaderComponent, {
+                imageIndex: currentImageIndex,
+              })
+            )
+            : (
+              <ImageDefaultHeader onRequestClose={onRequestCloseEnhanced} />
+            )}
         </Animated.View>
         <VirtualizedList
           ref={imageList}
@@ -161,25 +162,6 @@ function ImageViewing({
     </Modal>
   );
 }
-
-const StatusBarManager = ({
-  presentationStyle,
-}: {
-  presentationStyle?: ModalProps["presentationStyle"];
-}) => {
-  if (Platform.OS === "ios" || presentationStyle !== "overFullScreen") {
-    return null;
-  }
-
-  //Can't get an actual state of app status bar with default RN. Gonna rely on "presentationStyle === overFullScreen" prop and guess application status bar state to be visible in this case.
-  StatusBar.setHidden(true);
-
-  useEffect(() => {
-    return () => StatusBar.setHidden(false);
-  }, []);
-
-  return null;
-};
 
 const styles = StyleSheet.create({
   container: {
