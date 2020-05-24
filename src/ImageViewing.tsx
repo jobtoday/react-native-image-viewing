@@ -8,15 +8,17 @@
 
 import React, { ComponentType, useCallback, useEffect } from "react";
 import {
+  Platform,
   Animated,
   Dimensions,
   StyleSheet,
   View,
   VirtualizedList,
   ModalProps,
+  Modal,
+  StatusBar,
 } from "react-native";
 
-import Modal from "./components/Modal/Modal";
 import ImageItem from "./components/ImageItem/ImageItem";
 import ImageDefaultHeader from "./components/ImageDefaultHeader";
 
@@ -88,15 +90,21 @@ function ImageViewing({
     [imageList]
   );
 
+  if (!visible) {
+    return null;
+  }
+
   return (
     <Modal
-      transparent
+      transparent={presentationStyle === "overFullScreen"}
       visible={visible}
       presentationStyle={presentationStyle}
       animationType={animationType}
       onRequestClose={onRequestCloseEnhanced}
       supportedOrientations={["portrait"]}
+      hardwareAccelerated
     >
+      <StatusBarManager presentationStyle={presentationStyle} />
       <View style={[styles.container, { opacity, backgroundColor }]}>
         <Animated.View style={[styles.header, { transform: headerTransform }]}>
           {typeof HeaderComponent !== "undefined" ? (
@@ -153,6 +161,25 @@ function ImageViewing({
     </Modal>
   );
 }
+
+const StatusBarManager = ({
+  presentationStyle,
+}: {
+  presentationStyle?: ModalProps["presentationStyle"];
+}) => {
+  if (Platform.OS === "ios" || presentationStyle !== "overFullScreen") {
+    return null;
+  }
+
+  //Can't get an actual state of app status bar with default RN. Gonna rely on "presentationStyle === overFullScreen" prop and guess application status bar state to be visible in this case.
+  StatusBar.setHidden(true);
+
+  useEffect(() => {
+    return () => StatusBar.setHidden(false);
+  }, []);
+
+  return null;
+};
 
 const styles = StyleSheet.create({
   container: {
