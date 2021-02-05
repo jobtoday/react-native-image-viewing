@@ -18,23 +18,30 @@ const useAnimatedComponents = () => {
   const headerTranslate = new Animated.ValueXY(INITIAL_POSITION);
   const footerTranslate = new Animated.ValueXY(INITIAL_POSITION);
 
-  const toggleVisible = (isVisible: boolean) => {
+  const toggleVisible = (
+    isVisible: boolean,
+    hideHeaderOnZoom: boolean,
+    hideFooterOnZoom: boolean
+  ) => {
     if (isVisible) {
       Animated.parallel([
         Animated.timing(headerTranslate.y, { ...ANIMATION_CONFIG, toValue: 0 }),
         Animated.timing(footerTranslate.y, { ...ANIMATION_CONFIG, toValue: 0 }),
       ]).start();
     } else {
-      Animated.parallel([
-        Animated.timing(headerTranslate.y, {
-          ...ANIMATION_CONFIG,
-          toValue: -300,
-        }),
-        Animated.timing(footerTranslate.y, {
-          ...ANIMATION_CONFIG,
-          toValue: 300,
-        }),
-      ]).start();
+      const hideHeaderAnimation = hideHeaderOnZoom
+        ? [Animated.timing(headerTranslate.y, {
+            ...ANIMATION_CONFIG,
+            toValue: -300,
+          })]
+        : [];
+      const hideFooterAnimation = hideFooterOnZoom
+        ? [Animated.timing(footerTranslate.y, {
+            ...ANIMATION_CONFIG,
+            toValue: 300,
+          })]
+        : [];
+      Animated.parallel([...hideHeaderAnimation, ...hideFooterAnimation]).start();
     }
   };
 
