@@ -6,7 +6,7 @@
  *
  */
 
-import React, { useState } from "react";
+import React, { Fragment, useState } from "react";
 import {
   Alert,
   Platform,
@@ -23,6 +23,7 @@ import ImageViewing from "../src/ImageViewing";
 import ImageList from "./components/ImageList";
 import ImageHeader from "./components/ImageHeader";
 import ImageFooter from "./components/ImageFooter";
+import InputFooter from "./components/InputFooter";
 
 import { architecture } from "./data/architecture";
 import { travel } from "./data/travel";
@@ -87,7 +88,10 @@ export default function App() {
             : undefined
         }
         FooterComponent={({ imageIndex }) => (
-          <ImageFooter imageIndex={imageIndex} imagesCount={images.length} />
+          <Fragment>
+            <ImageFooter imageIndex={imageIndex} imagesCount={images.length - 1} />
+            {imageIndex === 0 && <InputFooter />}
+          </Fragment>
         )}
       />
       <ImageList

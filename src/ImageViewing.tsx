@@ -152,10 +152,16 @@ function ImageViewing({
         {typeof FooterComponent !== "undefined" && (
           <Animated.View
             style={[styles.footer, { transform: footerTransform }]}
+            pointerEvents='box-none'
           >
-            {React.createElement(FooterComponent, {
-              imageIndex: currentImageIndex,
-            })}
+            <View
+              style={styles.footerContent}
+              pointerEvents='box-none'
+            >
+              {React.createElement(FooterComponent, {
+                imageIndex: currentImageIndex,
+              })}
+            </View>
           </Animated.View>
         )}
       </View>
@@ -169,17 +175,18 @@ const styles = StyleSheet.create({
     backgroundColor: "#000",
   },
   header: {
-    position: "absolute",
-    width: "100%",
+    ...StyleSheet.absoluteFillObject,
+    bottom: undefined,
     zIndex: 1,
-    top: 0,
   },
   footer: {
-    position: "absolute",
-    width: "100%",
+    ...StyleSheet.absoluteFillObject,
     zIndex: 1,
-    bottom: 0,
   },
+  footerContent: {
+    flex: 1,
+    justifyContent: 'flex-end',
+  }
 });
 
 const EnhancedImageViewing = (props: Props) => (
