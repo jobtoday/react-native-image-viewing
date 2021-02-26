@@ -28,6 +28,7 @@ import { ImageSource } from "./@types";
 
 type Props = {
   images: ImageSource[];
+  imageKey?: string;
   imageIndex: number;
   visible: boolean;
   onRequestClose: () => void;
@@ -43,6 +44,7 @@ type Props = {
   FooterComponent?: ComponentType<{ imageIndex: number }>;
 };
 
+const DEFAULT_IMAGE_KEY = "uri";
 const DEFAULT_ANIMATION_TYPE = "fade";
 const DEFAULT_BG_COLOR = "#000";
 const DEFAULT_DELAY_LONG_PRESS = 800;
@@ -51,6 +53,7 @@ const SCREEN_WIDTH = SCREEN.width;
 
 function ImageViewing({
   images,
+  imageKey = DEFAULT_IMAGE_KEY,
   imageIndex,
   visible,
   onRequestClose,
@@ -134,7 +137,9 @@ function ImageViewing({
             offset: SCREEN_WIDTH * index,
             index,
           })}
-          renderItem={({ item: imageSrc }) => (
+          renderItem={({ item: imageSrc }) =>{
+            const source = typeof imageSrc === 'object' && imageSrc !== null ? {uri:imageSrc[imageKey]} : {uri:imageSrc};
+            return(
             <ImageItem
               onZoom={onZoom}
               imageSrc={imageSrc}
@@ -144,10 +149,10 @@ function ImageViewing({
               swipeToCloseEnabled={swipeToCloseEnabled}
               doubleTapToZoomEnabled={doubleTapToZoomEnabled}
             />
-          )}
+          )}}
           onMomentumScrollEnd={onScroll}
           //@ts-ignore
-          keyExtractor={(imageSrc) => imageSrc.uri || `${imageSrc}`}
+          keyExtractor={(imageSrc) => imageSrc[imageKey] || `${imageSrc}`}
         />
         {typeof FooterComponent !== "undefined" && (
           <Animated.View
