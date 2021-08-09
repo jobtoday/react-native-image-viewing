@@ -63,6 +63,7 @@ const [visible, setIsVisible] = useState(false);
 | Prop name                | Description                                                                                         | Type                                                        | Required |
 | ------------------------ | --------------------------------------------------------------------------------------------------- | ----------------------------------------------------------- | -------- |
 | `images`                 | Array of images to display                                                                          | ImageSource[]                                               | true     |
+| `keyExtractor`           | Uniqely identifying each image    | (imageSrc: ImageSource, index: number) => string | false |
 | `imageIndex`             | Current index of image to display                                                                   | number                                                      | true     |
 | `visible`                | Is modal shown or not                                                                               | boolean                                                     | true     |
 | `onRequestClose`         | Function called to close the modal                                                                  | function                                                    | true     |

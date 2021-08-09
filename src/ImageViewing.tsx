@@ -28,6 +28,7 @@ import { ImageSource } from "./@types";
 
 type Props = {
   images: ImageSource[];
+  keyExtractor?: (imageSrc: ImageSource, index: number) => string;
   imageIndex: number;
   visible: boolean;
   onRequestClose: () => void;
@@ -51,6 +52,7 @@ const SCREEN_WIDTH = SCREEN.width;
 
 function ImageViewing({
   images,
+  keyExtractor,
   imageIndex,
   visible,
   onRequestClose,
@@ -147,7 +149,7 @@ function ImageViewing({
           )}
           onMomentumScrollEnd={onScroll}
           //@ts-ignore
-          keyExtractor={(imageSrc) => imageSrc.uri || `${imageSrc}`}
+          keyExtractor={(imageSrc, index) => keyExtractor ? keyExtractor(imageSrc, index) : imageSrc.uri || `${imageSrc}`}
         />
         {typeof FooterComponent !== "undefined" && (
           <Animated.View
