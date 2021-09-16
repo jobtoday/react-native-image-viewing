@@ -17,8 +17,8 @@ import {
   NativeScrollEvent,
   NativeSyntheticEvent,
   TouchableWithoutFeedback,
-  GestureResponderEvent,
-} from "react-native";
+  GestureResponderEvent, ImageStyle,
+} from 'react-native';
 
 import useDoubleTapToZoom from "../../hooks/useDoubleTapToZoom";
 import useImageDimensions from "../../hooks/useImageDimensions";
@@ -35,6 +35,7 @@ const SCREEN_HEIGHT = SCREEN.height;
 
 type Props = {
   imageSrc: ImageSource;
+  imageStyle: ImageStyle,
   onRequestClose: () => void;
   onZoom: (scaled: boolean) => void;
   onLongPress: (image: ImageSource) => void;
@@ -45,6 +46,7 @@ type Props = {
 
 const ImageItem = ({
   imageSrc,
+  imageStyle,
   onZoom,
   onRequestClose,
   onLongPress,
@@ -73,7 +75,7 @@ const ImageItem = ({
     translateValue,
     scaleValue
   );
-  const imageStylesWithOpacity = { ...imagesStyles, opacity: imageOpacity };
+  const imageStylesWithOpacity = { ...imagesStyles, opacity: imageOpacity, ...imageStyle };
 
   const onScrollEndDrag = useCallback(
     ({ nativeEvent }: NativeSyntheticEvent<NativeScrollEvent>) => {
