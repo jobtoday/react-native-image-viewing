@@ -17,6 +17,7 @@
     "image-viewer"
   ],
   "scripts": {
+    "prepare": "yarn build",
     "build": "tsc",
     "postversion": "yarn build"
   },
