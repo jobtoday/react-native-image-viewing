@@ -71,6 +71,7 @@ export default function App() {
       </View>
       <ImageViewing
         images={getImageSource(images)}
+        imagesStyle={{ backgroundColor: 'lightblue' }}
         imageIndex={currentImageIndex}
         presentationStyle="overFullScreen"
         visible={isVisible}

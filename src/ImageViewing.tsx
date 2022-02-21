@@ -15,6 +15,7 @@ import {
   VirtualizedList,
   ModalProps,
   Modal,
+  ImageStyle,
 } from "react-native";
 
 import ImageItem from "./components/ImageItem/ImageItem";
@@ -28,6 +29,7 @@ import { ImageSource } from "./@types";
 
 type Props = {
   images: ImageSource[];
+  imagesStyle?: ImageStyle,
   keyExtractor?: (imageSrc: ImageSource, index: number) => string;
   imageIndex: number;
   visible: boolean;
@@ -52,6 +54,7 @@ const SCREEN_WIDTH = SCREEN.width;
 
 function ImageViewing({
   images,
+  imagesStyle = {},
   keyExtractor,
   imageIndex,
   visible,
@@ -140,6 +143,7 @@ function ImageViewing({
             <ImageItem
               onZoom={onZoom}
               imageSrc={imageSrc}
+              imageStyle={imagesStyle}
               onRequestClose={onRequestCloseEnhanced}
               onLongPress={onLongPress}
               delayLongPress={delayLongPress}

@@ -21,6 +21,11 @@ export const architecture = [
   },
   {
     thumbnail:
+      "https://www.vhv.rs/dpng/d/286-2863549_high-resolution-building-png-images-free-download-searchpng.png",
+    original: require("./building.png"),
+  },
+  {
+    thumbnail:
       "https://images.unsplash.com/photo-1481026469463-66327c86e544?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1424&q=80",
     original: require("./architecture.jpg"),
   },

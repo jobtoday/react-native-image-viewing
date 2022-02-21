@@ -13,8 +13,8 @@ import {
   Dimensions,
   StyleSheet,
   NativeScrollEvent,
-  NativeSyntheticEvent,
-} from "react-native";
+  NativeSyntheticEvent, ImageStyle,
+} from 'react-native';
 
 import useImageDimensions from "../../hooks/useImageDimensions";
 import usePanResponder from "../../hooks/usePanResponder";
@@ -31,6 +31,7 @@ const SCREEN_HEIGHT = SCREEN.height;
 
 type Props = {
   imageSrc: ImageSource;
+  imageStyle: ImageStyle,
   onRequestClose: () => void;
   onZoom: (isZoomed: boolean) => void;
   onLongPress: (image: ImageSource) => void;
@@ -41,6 +42,7 @@ type Props = {
 
 const ImageItem = ({
   imageSrc,
+  imageStyle,
   onZoom,
   onRequestClose,
   onLongPress,
@@ -87,7 +89,7 @@ const ImageItem = ({
     inputRange: [-SWIPE_CLOSE_OFFSET, 0, SWIPE_CLOSE_OFFSET],
     outputRange: [0.7, 1, 0.7],
   });
-  const imageStylesWithOpacity = { ...imagesStyles, opacity: imageOpacity };
+  const imageStylesWithOpacity = { ...imagesStyles, opacity: imageOpacity, ...imageStyle };
 
   const onScrollEndDrag = ({
     nativeEvent,
