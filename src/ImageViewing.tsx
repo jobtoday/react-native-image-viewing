@@ -39,6 +39,8 @@ type Props = {
   backgroundColor?: string;
   swipeToCloseEnabled?: boolean;
   doubleTapToZoomEnabled?: boolean;
+  hideHeaderOnZoom?: boolean;
+  hideFooterOnZoom?: boolean;
   delayLongPress?: number;
   HeaderComponent?: ComponentType<{ imageIndex: number }>;
   FooterComponent?: ComponentType<{ imageIndex: number }>;
@@ -49,6 +51,8 @@ const DEFAULT_BG_COLOR = "#000";
 const DEFAULT_DELAY_LONG_PRESS = 800;
 const SCREEN = Dimensions.get("screen");
 const SCREEN_WIDTH = SCREEN.width;
+const DEFAULT_HIDE_HEADER_ON_ZOOM = true;
+const DEFAULT_HIDE_FOOTER_ON_ZOOM = true;
 
 function ImageViewing({
   images,
@@ -66,6 +70,8 @@ function ImageViewing({
   delayLongPress = DEFAULT_DELAY_LONG_PRESS,
   HeaderComponent,
   FooterComponent,
+  hideHeaderOnZoom = DEFAULT_HIDE_HEADER_ON_ZOOM,
+  hideFooterOnZoom = DEFAULT_HIDE_FOOTER_ON_ZOOM,
 }: Props) {
   const imageList = React.createRef<VirtualizedList<ImageSource>>();
   const [opacity, onRequestCloseEnhanced] = useRequestClose(onRequestClose);
@@ -86,9 +92,9 @@ function ImageViewing({
     (isScaled: boolean) => {
       // @ts-ignore
       imageList?.current?.setNativeProps({ scrollEnabled: !isScaled });
-      toggleBarsVisible(!isScaled);
+      toggleBarsVisible(!isScaled, hideHeaderOnZoom, hideFooterOnZoom);
     },
-    [imageList],
+    [imageList, hideHeaderOnZoom, hideFooterOnZoom],
   );
 
   if (!visible) {

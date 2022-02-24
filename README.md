@@ -77,6 +77,8 @@ const [visible, setIsVisible] = useState(false);
 | `doubleTapToZoomEnabled` | Zoom image by double tap on it: default `true`                                                      | boolean                                                     | false    |
 | `HeaderComponent`        | Header component, gets current `imageIndex` as a prop                                               | component, function                                         | false    |
 | `FooterComponent`        | Footer component, gets current `imageIndex` as a prop                                               | component, function                                         | false    |
+| `hideHeaderOnZoom`       | Hide Header when image is zoomed                                                                    | boolean                                                     | false    |
+| `hideFooterOnZoom`       | Hide Footer when image is zoomed                                                                    | boolean                                                     | false    |   
 
 - type ImageSource = ImageURISource | ImageRequireSource
 
