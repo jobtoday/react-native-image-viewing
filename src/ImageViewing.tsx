@@ -42,6 +42,8 @@ type Props = {
   delayLongPress?: number;
   HeaderComponent?: ComponentType<{ imageIndex: number }>;
   FooterComponent?: ComponentType<{ imageIndex: number }>;
+  ErrorComponent?: ComponentType;
+  LoadingComponent?: ComponentType;
 };
 
 const DEFAULT_ANIMATION_TYPE = "fade";
@@ -66,6 +68,8 @@ function ImageViewing({
   delayLongPress = DEFAULT_DELAY_LONG_PRESS,
   HeaderComponent,
   FooterComponent,
+  ErrorComponent,
+  LoadingComponent,
 }: Props) {
   const imageList = React.createRef<VirtualizedList<ImageSource>>();
   const [opacity, onRequestCloseEnhanced] = useRequestClose(onRequestClose);
@@ -145,6 +149,8 @@ function ImageViewing({
               delayLongPress={delayLongPress}
               swipeToCloseEnabled={swipeToCloseEnabled}
               doubleTapToZoomEnabled={doubleTapToZoomEnabled}
+              ErrorComponent={ErrorComponent}
+              LoadingComponent={LoadingComponent}
             />
           )}
           onMomentumScrollEnd={onScroll}

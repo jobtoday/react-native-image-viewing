@@ -77,6 +77,8 @@ const [visible, setIsVisible] = useState(false);
 | `doubleTapToZoomEnabled` | Zoom image by double tap on it: default `true`                                                      | boolean                                                     | false    |
 | `HeaderComponent`        | Header component, gets current `imageIndex` as a prop                                               | component, function                                         | false    |
 | `FooterComponent`        | Footer component, gets current `imageIndex` as a prop                                               | component, function                                         | false    |
+| `ErrorComponent`        | Error component loaded when image `onError` is called                                             | component, function                                         | false    |
+| `LoadingComponent`        | Loading component shown while image is loading                                            | component, function                                         | false    |
 
 - type ImageSource = ImageURISource | ImageRequireSource
 

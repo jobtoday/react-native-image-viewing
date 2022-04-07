@@ -6,7 +6,7 @@
  *
  */
 
-import React, { useCallback, useRef, useState } from "react";
+import React, { ComponentType, useCallback, useRef, useState } from "react";
 
 import {
   Animated,
@@ -26,6 +26,7 @@ import useImageDimensions from "../../hooks/useImageDimensions";
 import { getImageStyles, getImageTransform } from "../../utils";
 import { ImageSource } from "../../@types";
 import { ImageLoading } from "./ImageLoading";
+import { ImageErrorWrapper } from "./ImageErrorWrapper";
 
 const SWIPE_CLOSE_OFFSET = 75;
 const SWIPE_CLOSE_VELOCITY = 1.55;
@@ -41,6 +42,8 @@ type Props = {
   delayLongPress: number;
   swipeToCloseEnabled?: boolean;
   doubleTapToZoomEnabled?: boolean;
+  ErrorComponent?: ComponentType;
+  LoadingComponent?: ComponentType;
 };
 
 const ImageItem = ({
@@ -51,9 +54,12 @@ const ImageItem = ({
   delayLongPress,
   swipeToCloseEnabled = true,
   doubleTapToZoomEnabled = true,
+  ErrorComponent,
+  LoadingComponent,
 }: Props) => {
   const scrollViewRef = useRef<ScrollView>(null);
   const [loaded, setLoaded] = useState(false);
+  const [loadingError, setLoadingError] = useState(false);
   const [scaled, setScaled] = useState(false);
   const imageDimensions = useImageDimensions(imageSrc);
   const handleDoubleTap = useDoubleTapToZoom(scrollViewRef, scaled, SCREEN);
@@ -113,6 +119,16 @@ const ImageItem = ({
     [imageSrc, onLongPress]
   );
 
+  const onError = useCallback(() => {
+    setLoaded(true);
+    setLoadingError(true);
+  }, [])
+
+  const onLoad = useCallback(() => {
+    setLoadingError(false)
+    setLoaded(true)
+  }, [])
+
   return (
     <View>
       <ScrollView
@@ -131,7 +147,8 @@ const ImageItem = ({
           onScroll,
         })}
       >
-        {(!loaded || !imageDimensions) && <ImageLoading />}
+        {((loadingError && ErrorComponent) && <ImageErrorWrapper ErrorComponent={ErrorComponent} />)}
+        {(!loaded || !imageDimensions) && <ImageLoading LoadingComponent={LoadingComponent} />}
         <TouchableWithoutFeedback
           onPress={doubleTapToZoomEnabled ? handleDoubleTap : undefined}
           onLongPress={onLongPressHandler}
@@ -140,7 +157,8 @@ const ImageItem = ({
           <Animated.Image
             source={imageSrc}
             style={imageStylesWithOpacity}
-            onLoad={() => setLoaded(true)}
+            onError={onError}
+            onLoad={onLoad}
           />
         </TouchableWithoutFeedback>
       </ScrollView>
