@@ -6,7 +6,7 @@
  *
  */
 
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, ComponentType } from "react";
 
 import {
   Animated,
@@ -22,6 +22,7 @@ import usePanResponder from "../../hooks/usePanResponder";
 import { getImageStyles, getImageTransform } from "../../utils";
 import { ImageSource } from "../../@types";
 import { ImageLoading } from "./ImageLoading";
+import { ImageErrorWrapper } from "./ImageErrorWrapper";
 
 const SWIPE_CLOSE_OFFSET = 75;
 const SWIPE_CLOSE_VELOCITY = 1.75;
@@ -37,6 +38,8 @@ type Props = {
   delayLongPress: number;
   swipeToCloseEnabled?: boolean;
   doubleTapToZoomEnabled?: boolean;
+  ErrorComponent?: ComponentType;
+  LoadingComponent?: ComponentType;
 };
 
 const ImageItem = ({
@@ -47,12 +50,16 @@ const ImageItem = ({
   delayLongPress,
   swipeToCloseEnabled = true,
   doubleTapToZoomEnabled = true,
+  ErrorComponent,
+  LoadingComponent,
 }: Props) => {
   const imageContainer = React.createRef<any>();
   const imageDimensions = useImageDimensions(imageSrc);
   const [translate, scale] = getImageTransform(imageDimensions, SCREEN);
   const scrollValueY = new Animated.Value(0);
   const [isLoaded, setLoadEnd] = useState(false);
+  const [loadingError, setLoadingError] = useState(false);
+
 
   const onLoaded = useCallback(() => setLoadEnd(true), []);
   const onZoomPerformed = (isZoomed: boolean) => {
@@ -112,6 +119,11 @@ const ImageItem = ({
     scrollValueY.setValue(offsetY);
   };
 
+  const onError = useCallback(() => {
+    setLoadEnd(true);
+    setLoadingError(true);
+  }, [])
+
   return (
     <Animated.ScrollView
       ref={imageContainer}
@@ -127,13 +139,15 @@ const ImageItem = ({
         onScrollEndDrag,
       })}
     >
+      {((loadingError && ErrorComponent) && <ImageErrorWrapper ErrorComponent={ErrorComponent} />)}
       <Animated.Image
         {...panHandlers}
         source={imageSrc}
         style={imageStylesWithOpacity}
         onLoad={onLoaded}
+        onError={onError}
       />
-      {(!isLoaded || !imageDimensions) && <ImageLoading />}
+      {(!isLoaded || !imageDimensions) && <ImageLoading LoadingComponent={LoadingComponent} />}
     </Animated.ScrollView>
   );
 };
