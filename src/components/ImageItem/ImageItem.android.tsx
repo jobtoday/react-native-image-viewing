@@ -11,7 +11,6 @@ import React, { useState, useCallback } from "react";
 import {
   Animated,
   Dimensions,
-  StyleSheet,
   NativeScrollEvent,
   NativeSyntheticEvent,
 } from "react-native";
@@ -25,9 +24,6 @@ import { ImageLoading } from "./ImageLoading";
 
 const SWIPE_CLOSE_OFFSET = 75;
 const SWIPE_CLOSE_VELOCITY = 1.75;
-const SCREEN = Dimensions.get("window");
-const SCREEN_WIDTH = SCREEN.width;
-const SCREEN_HEIGHT = SCREEN.height;
 
 type Props = {
   imageSrc: ImageSource;
@@ -48,6 +44,10 @@ const ImageItem = ({
   swipeToCloseEnabled = true,
   doubleTapToZoomEnabled = true,
 }: Props) => {
+  const SCREEN = Dimensions.get('window');
+  const SCREEN_WIDTH = SCREEN.width;
+  const SCREEN_HEIGHT = SCREEN.height;
+
   const imageContainer = React.createRef<any>();
   const imageDimensions = useImageDimensions(imageSrc);
   const [translate, scale] = getImageTransform(imageDimensions, SCREEN);
@@ -115,12 +115,12 @@ const ImageItem = ({
   return (
     <Animated.ScrollView
       ref={imageContainer}
-      style={styles.listItem}
+      style={{width: SCREEN_WIDTH, height: SCREEN_HEIGHT}}
       pagingEnabled
       nestedScrollEnabled
       showsHorizontalScrollIndicator={false}
       showsVerticalScrollIndicator={false}
-      contentContainerStyle={styles.imageScrollContainer}
+      contentContainerStyle={{height: SCREEN_HEIGHT * 2}}
       scrollEnabled={swipeToCloseEnabled}
       {...(swipeToCloseEnabled && {
         onScroll,
@@ -137,15 +137,5 @@ const ImageItem = ({
     </Animated.ScrollView>
   );
 };
-
-const styles = StyleSheet.create({
-  listItem: {
-    width: SCREEN_WIDTH,
-    height: SCREEN_HEIGHT,
-  },
-  imageScrollContainer: {
-    height: SCREEN_HEIGHT * 2,
-  },
-});
 
 export default React.memo(ImageItem);

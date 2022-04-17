@@ -7,7 +7,7 @@
  */
 
 import { useEffect, useState } from "react";
-import { Image, ImageURISource } from "react-native";
+import { Image, ImageURISource, Platform } from "react-native";
 
 import { createCache } from "../utils";
 import { Dimensions, ImageSource } from "../@types";
@@ -45,6 +45,17 @@ const useImageDimensions = (image: ImageSource): Dimensions | null => {
 
         if (imageDimensions) {
           resolve(imageDimensions);
+        } else if (Platform.OS === "web") {
+          Image.getSize(
+            source.uri!,
+            (width: number, height: number) => {
+              imageDimensionsCache.set(cacheKey, { width, height });
+              resolve({ width, height });
+            },
+            () => {
+              resolve({width: 0, height: 0});
+            }
+          );
         } else {
           // @ts-ignore
           Image.getSizeWithHeaders(
