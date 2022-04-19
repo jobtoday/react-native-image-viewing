@@ -70,7 +70,7 @@ function ImageViewing({
   const imageList = useRef<VirtualizedList<ImageSource>>(null);
   const [opacity, onRequestCloseEnhanced] = useRequestClose(onRequestClose);
   const [currentImageIndex, onScroll] = useImageIndexChange(imageIndex, SCREEN);
-  const [headerTransform, footerTransform, toggleBarsVisible] =
+  const [headerTransform, footerTransform, toggleVisible] =
     useAnimatedComponents();
 
   useEffect(() => {
@@ -83,7 +83,7 @@ function ImageViewing({
     (isScaled: boolean) => {
       // @ts-ignore
       imageList?.current?.setNativeProps({ scrollEnabled: !isScaled });
-      toggleBarsVisible(!isScaled);
+      toggleVisible(!isScaled);
     },
     [imageList]
   );
