@@ -13,6 +13,7 @@ import {
   PanResponderGestureState,
   PanResponderInstance,
   NativeTouchEvent,
+  I18nManager
 } from "react-native";
 import { Dimensions, Position } from "./@types";
 
@@ -99,7 +100,7 @@ export const getImageTranslate = (
   };
 
   return {
-    x: getTranslateForAxis("x"),
+    x: getTranslateForAxis("x") * (I18nManager.isRTL ? -1 : 1),
     y: getTranslateForAxis("y"),
   };
 };
