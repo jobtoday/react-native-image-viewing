@@ -6,7 +6,7 @@
  *
  */
 
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useRef, useState, ComponentType } from "react";
 
 import {
   Animated,
@@ -39,6 +39,7 @@ type Props = {
   delayLongPress: number;
   swipeToCloseEnabled?: boolean;
   doubleTapToZoomEnabled?: boolean;
+  CustomImageComponent?: ComponentType;
 };
 
 const ImageItem = ({
@@ -49,6 +50,7 @@ const ImageItem = ({
   delayLongPress,
   swipeToCloseEnabled = true,
   doubleTapToZoomEnabled = true,
+  CustomImageComponent = null
 }: Props) => {
   const imageContainer = useRef<ScrollView & NativeMethodsMixin>(null);
   const imageDimensions = useImageDimensions(imageSrc);
@@ -131,13 +133,8 @@ const ImageItem = ({
         onScrollEndDrag,
       })}
     >
-      <Animated.Image
-        {...panHandlers}
-        source={imageSrc}
-        style={imageStylesWithOpacity}
-        onLoad={onLoaded}
-      />
-      {(!isLoaded || !imageDimensions) && <ImageLoading />}
+      {CustomImageComponent ? (React.createElement(CustomImageComponent, {panHandlers:{...panHandlers}, source:{imageSrc}, style: {imageStylesWithOpacity}, onLoad:{onLoaded}, loadingImage: <ImageLoading />})) : (<Animated.Image {...panHandlers} source={imageSrc} style={imageStylesWithOpacity} onLoad={onLoaded}/>)}
+      {(!isLoaded || !imageDimensions || !CustomImageComponent) && <ImageLoading />}
     </ScrollView>
   );
 };
