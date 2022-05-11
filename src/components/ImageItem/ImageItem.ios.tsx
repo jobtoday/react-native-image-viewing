@@ -6,7 +6,7 @@
  *
  */
 
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useRef, useState, ComponentType } from "react";
 
 import {
   Animated,
@@ -41,6 +41,7 @@ type Props = {
   delayLongPress: number;
   swipeToCloseEnabled?: boolean;
   doubleTapToZoomEnabled?: boolean;
+  CustomImageComponent?: ComponentType;
 };
 
 const ImageItem = ({
@@ -51,6 +52,7 @@ const ImageItem = ({
   delayLongPress,
   swipeToCloseEnabled = true,
   doubleTapToZoomEnabled = true,
+  CustomImageComponent = null
 }: Props) => {
   const scrollViewRef = useRef<ScrollView>(null);
   const [loaded, setLoaded] = useState(false);
@@ -130,17 +132,9 @@ const ImageItem = ({
           onScroll,
         })}
       >
-        {(!loaded || !imageDimensions) && <ImageLoading />}
-        <TouchableWithoutFeedback
-          onPress={doubleTapToZoomEnabled ? handleDoubleTap : undefined}
-          onLongPress={onLongPressHandler}
-          delayLongPress={delayLongPress}
-        >
-          <Animated.Image
-            source={imageSrc}
-            style={imageStylesWithOpacity}
-            onLoad={() => setLoaded(true)}
-          />
+        {(!loaded || !imageDimensions || !CustomImageComponent) && <ImageLoading />}
+        <TouchableWithoutFeedback onPress={doubleTapToZoomEnabled ? handleDoubleTap : undefined} onLongPress={onLongPressHandler} delayLongPress={delayLongPress}>
+            {CustomImageComponent ? (React.createElement(CustomImageComponent, {source:{imageSrc}, style: {imageStylesWithOpacity}, onLoad:() => setLoaded(true), loadingImage: <ImageLoading />})) : (<Animated.Image source={imageSrc} style={imageStylesWithOpacity} onLoad={() => setLoaded(true)}/>)}
         </TouchableWithoutFeedback>
       </ScrollView>
     </View>
