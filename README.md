@@ -66,6 +66,7 @@ const [visible, setIsVisible] = useState(false);
 | `keyExtractor`           | Uniqely identifying each image    | (imageSrc: ImageSource, index: number) => string | false |
 | `imageIndex`             | Current index of image to display                                                                   | number                                                      | true     |
 | `visible`                | Is modal shown or not                                                                               | boolean                                                     | true     |
+| `closeButtonContent` | Custom close button content | ReactNode | false |
 | `onRequestClose`         | Function called to close the modal                                                                  | function                                                    | true     |
 | `onImageIndexChange`     | Function called when image index has been changed                                                   | function                                                    | false    |
 | `onLongPress`            | Function called when image long pressed                                                             | function (event: GestureResponderEvent, image: ImageSource) | false    |

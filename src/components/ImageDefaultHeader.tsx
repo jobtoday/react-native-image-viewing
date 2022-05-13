@@ -7,22 +7,25 @@
  */
 
 import React from "react";
+import type { ReactNode } from 'react';
+
 import { SafeAreaView, Text, TouchableOpacity, StyleSheet } from "react-native";
 
 type Props = {
+  closeButtonContent?: ReactNode;
   onRequestClose: () => void;
 };
 
 const HIT_SLOP = { top: 16, left: 16, bottom: 16, right: 16 };
 
-const ImageDefaultHeader = ({ onRequestClose }: Props) => (
+const ImageDefaultHeader = ({ closeButtonContent, onRequestClose }: Props) => (
   <SafeAreaView style={styles.root}>
     <TouchableOpacity
-      style={styles.closeButton}
+      style={(closeButtonContent ? {} : styles.closeButton)}
       onPress={onRequestClose}
       hitSlop={HIT_SLOP}
     >
-      <Text style={styles.closeText}>✕</Text>
+      {closeButtonContent ? closeButtonContent : <Text style={styles.closeText}>✕</Text>}
     </TouchableOpacity>
   </SafeAreaView>
 );

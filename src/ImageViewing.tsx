@@ -25,12 +25,14 @@ import useAnimatedComponents from "./hooks/useAnimatedComponents";
 import useImageIndexChange from "./hooks/useImageIndexChange";
 import useRequestClose from "./hooks/useRequestClose";
 import { ImageSource } from "./@types";
+import type { ReactNode } from 'react';
 
 type Props = {
   images: ImageSource[];
   keyExtractor?: (imageSrc: ImageSource, index: number) => string;
   imageIndex: number;
   visible: boolean;
+  closeButtonContent?: ReactNode;
   onRequestClose: () => void;
   onLongPress?: (image: ImageSource) => void;
   onImageIndexChange?: (imageIndex: number) => void;
@@ -55,6 +57,7 @@ function ImageViewing({
   keyExtractor,
   imageIndex,
   visible,
+  closeButtonContent,
   onRequestClose,
   onLongPress = () => {},
   onImageIndexChange,
@@ -110,7 +113,10 @@ function ImageViewing({
               imageIndex: currentImageIndex,
             })
           ) : (
-            <ImageDefaultHeader onRequestClose={onRequestCloseEnhanced} />
+            <ImageDefaultHeader
+              closeButtonContent={closeButtonContent}
+              onRequestClose={onRequestCloseEnhanced}
+            />
           )}
         </Animated.View>
         <VirtualizedList
