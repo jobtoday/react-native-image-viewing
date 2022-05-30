@@ -65,11 +65,27 @@ const usePanResponder = ({
   const meaningfulShift = MIN_DIMENSION * 0.01;
   const scaleValue = new Animated.Value(initialScale);
   const translateValue = new Animated.ValueXY(initialTranslate);
-
   const imageDimensions = getImageDimensionsByTranslate(
     initialTranslate,
     SCREEN
   );
+
+  useEffect(() => {
+    onZoom(false);
+    Animated.parallel(
+      [
+        Animated.timing(scaleValue, {
+          toValue: initialScale,
+          duration: 300,
+          useNativeDriver: false,
+        }),
+      ],
+      { stopTogether: false }
+      ).start(() => {
+      currentScale = initialScale;
+      currentTranslate = initialTranslate;
+    });
+  });
 
   const getBounds = (scale: number) => {
     const scaledImageDimensions = {
