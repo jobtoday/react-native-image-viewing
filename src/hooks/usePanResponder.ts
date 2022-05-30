@@ -22,7 +22,6 @@ import {
   getDistanceBetweenTouches,
   getImageTranslate,
   getImageDimensionsByTranslate,
-  getImageTransform,
 } from "../utils";
 
 const SCREEN = Dimensions.get("window");
