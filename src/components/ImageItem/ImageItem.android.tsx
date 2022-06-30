@@ -6,150 +6,182 @@
  *
  */
 
-import React, { useCallback, useRef, useState } from "react";
+import React, { ReactNode, useCallback, useRef, useState } from 'react'
 
 import {
-  Animated,
-  ScrollView,
-  Dimensions,
-  StyleSheet,
-  NativeScrollEvent,
-  NativeSyntheticEvent,
-  NativeMethodsMixin,
-} from "react-native";
+	Animated,
+	ScrollView,
+	Dimensions,
+	StyleSheet,
+	NativeScrollEvent,
+	NativeSyntheticEvent,
+	NativeMethodsMixin,
+	View
+} from 'react-native'
 
-import useImageDimensions from "../../hooks/useImageDimensions";
-import usePanResponder from "../../hooks/usePanResponder";
+import useImageDimensions from '../../hooks/useImageDimensions'
+import usePanResponder from '../../hooks/usePanResponder'
 
-import { getImageStyles, getImageTransform } from "../../utils";
-import { ImageSource } from "../../@types";
-import { ImageLoading } from "./ImageLoading";
+import { getImageStyles, getImageTransform } from '../../utils'
+import { ImageSource } from '../../@types'
+import { ImageLoading } from './ImageLoading'
 
-const SWIPE_CLOSE_OFFSET = 75;
-const SWIPE_CLOSE_VELOCITY = 1.75;
-const SCREEN = Dimensions.get("window");
-const SCREEN_WIDTH = SCREEN.width;
-const SCREEN_HEIGHT = SCREEN.height;
+const SWIPE_CLOSE_OFFSET = 75
+const SWIPE_CLOSE_VELOCITY = 1.75
+const SCREEN = Dimensions.get('window')
+const SCREEN_WIDTH = SCREEN.width
+const SCREEN_HEIGHT = SCREEN.height
 
 type Props = {
-  imageSrc: ImageSource;
-  onRequestClose: () => void;
-  onZoom: (isZoomed: boolean) => void;
-  onLongPress: (image: ImageSource) => void;
-  delayLongPress: number;
-  swipeToCloseEnabled?: boolean;
-  doubleTapToZoomEnabled?: boolean;
-};
+	imageSrc: ImageSource
+	onRequestClose: () => void
+	onZoom: (isZoomed: boolean) => void
+	onLongPress: (image: ImageSource) => void
+	delayLongPress: number
+	swipeToCloseEnabled?: boolean
+	doubleTapToZoomEnabled?: boolean
+	hideDefaultLoadingComponent?: boolean
+	customLoadingComponent?: ReactNode
+	onImageLoad?: () => void
+}
 
 const ImageItem = ({
-  imageSrc,
-  onZoom,
-  onRequestClose,
-  onLongPress,
-  delayLongPress,
-  swipeToCloseEnabled = true,
-  doubleTapToZoomEnabled = true,
+	imageSrc,
+	onZoom,
+	onRequestClose,
+	onLongPress,
+	delayLongPress,
+	swipeToCloseEnabled = true,
+	doubleTapToZoomEnabled = true,
+	hideDefaultLoadingComponent,
+	customLoadingComponent,
+	onImageLoad
 }: Props) => {
-  const imageContainer = useRef<ScrollView & NativeMethodsMixin>(null);
-  const imageDimensions = useImageDimensions(imageSrc);
-  const [translate, scale] = getImageTransform(imageDimensions, SCREEN);
-  const scrollValueY = new Animated.Value(0);
-  const [isLoaded, setLoadEnd] = useState(false);
+	const imageContainer = useRef<ScrollView & NativeMethodsMixin>(null)
+	const imageDimensions = useImageDimensions(imageSrc)
+	const [translate, scale] = getImageTransform(imageDimensions, SCREEN)
+	const scrollValueY = new Animated.Value(0)
+	const [isLoaded, setLoadEnd] = useState(false)
 
-  const onLoaded = useCallback(() => setLoadEnd(true), []);
-  const onZoomPerformed = useCallback(
-    (isZoomed: boolean) => {
-      onZoom(isZoomed);
-      if (imageContainer?.current) {
-        imageContainer.current.setNativeProps({
-          scrollEnabled: !isZoomed,
-        });
-      }
-    },
-    [imageContainer]
-  );
+	const onLoaded = useCallback(() => {
+		setLoadEnd(true)
 
-  const onLongPressHandler = useCallback(() => {
-    onLongPress(imageSrc);
-  }, [imageSrc, onLongPress]);
+		if (!onImageLoad || typeof onImageLoad !== 'function') return
 
-  const [panHandlers, scaleValue, translateValue] = usePanResponder({
-    initialScale: scale || 1,
-    initialTranslate: translate || { x: 0, y: 0 },
-    onZoom: onZoomPerformed,
-    doubleTapToZoomEnabled,
-    onLongPress: onLongPressHandler,
-    delayLongPress,
-  });
+		onImageLoad()
+	}, [])
+	const onZoomPerformed = useCallback(
+		(isZoomed: boolean) => {
+			onZoom(isZoomed)
+			if (imageContainer?.current) {
+				imageContainer.current.setNativeProps({
+					scrollEnabled: !isZoomed
+				})
+			}
+		},
+		[imageContainer]
+	)
 
-  const imagesStyles = getImageStyles(
-    imageDimensions,
-    translateValue,
-    scaleValue
-  );
-  const imageOpacity = scrollValueY.interpolate({
-    inputRange: [-SWIPE_CLOSE_OFFSET, 0, SWIPE_CLOSE_OFFSET],
-    outputRange: [0.7, 1, 0.7],
-  });
-  const imageStylesWithOpacity = { ...imagesStyles, opacity: imageOpacity };
+	const onLongPressHandler = useCallback(() => {
+		onLongPress(imageSrc)
+	}, [imageSrc, onLongPress])
 
-  const onScrollEndDrag = ({
-    nativeEvent,
-  }: NativeSyntheticEvent<NativeScrollEvent>) => {
-    const velocityY = nativeEvent?.velocity?.y ?? 0;
-    const offsetY = nativeEvent?.contentOffset?.y ?? 0;
+	const [panHandlers, scaleValue, translateValue] = usePanResponder({
+		initialScale: scale || 1,
+		initialTranslate: translate || { x: 0, y: 0 },
+		onZoom: onZoomPerformed,
+		doubleTapToZoomEnabled,
+		onLongPress: onLongPressHandler,
+		delayLongPress
+	})
 
-    if (
-      (Math.abs(velocityY) > SWIPE_CLOSE_VELOCITY &&
-        offsetY > SWIPE_CLOSE_OFFSET) ||
-      offsetY > SCREEN_HEIGHT / 2
-    ) {
-      onRequestClose();
-    }
-  };
+	const imagesStyles = getImageStyles(
+		imageDimensions,
+		translateValue,
+		scaleValue
+	)
+	const imageOpacity = scrollValueY.interpolate({
+		inputRange: [-SWIPE_CLOSE_OFFSET, 0, SWIPE_CLOSE_OFFSET],
+		outputRange: [0.7, 1, 0.7]
+	})
+	const imageStylesWithOpacity = { ...imagesStyles, opacity: imageOpacity }
 
-  const onScroll = ({
-    nativeEvent,
-  }: NativeSyntheticEvent<NativeScrollEvent>) => {
-    const offsetY = nativeEvent?.contentOffset?.y ?? 0;
+	const onScrollEndDrag = ({
+		nativeEvent
+	}: NativeSyntheticEvent<NativeScrollEvent>) => {
+		const velocityY = nativeEvent?.velocity?.y ?? 0
+		const offsetY = nativeEvent?.contentOffset?.y ?? 0
 
-    scrollValueY.setValue(offsetY);
-  };
+		if (
+			(Math.abs(velocityY) > SWIPE_CLOSE_VELOCITY &&
+				offsetY > SWIPE_CLOSE_OFFSET) ||
+			offsetY > SCREEN_HEIGHT / 2
+		) {
+			onRequestClose()
+		}
+	}
 
-  return (
-    <ScrollView
-      ref={imageContainer}
-      style={styles.listItem}
-      pagingEnabled
-      nestedScrollEnabled
-      showsHorizontalScrollIndicator={false}
-      showsVerticalScrollIndicator={false}
-      contentContainerStyle={styles.imageScrollContainer}
-      scrollEnabled={swipeToCloseEnabled}
-      {...(swipeToCloseEnabled && {
-        onScroll,
-        onScrollEndDrag,
-      })}
-    >
-      <Animated.Image
-        {...panHandlers}
-        source={imageSrc}
-        style={imageStylesWithOpacity}
-        onLoad={onLoaded}
-      />
-      {(!isLoaded || !imageDimensions) && <ImageLoading />}
-    </ScrollView>
-  );
-};
+	const onScroll = ({
+		nativeEvent
+	}: NativeSyntheticEvent<NativeScrollEvent>) => {
+		const offsetY = nativeEvent?.contentOffset?.y ?? 0
+
+		scrollValueY.setValue(offsetY)
+	}
+
+	return (
+		<ScrollView
+			ref={imageContainer}
+			style={styles.listItem}
+			pagingEnabled
+			nestedScrollEnabled
+			showsHorizontalScrollIndicator={false}
+			showsVerticalScrollIndicator={false}
+			contentContainerStyle={styles.imageScrollContainer}
+			scrollEnabled={swipeToCloseEnabled}
+			{...(swipeToCloseEnabled && {
+				onScroll,
+				onScrollEndDrag
+			})}
+		>
+			<Animated.Image
+				{...panHandlers}
+				source={imageSrc}
+				style={imageStylesWithOpacity}
+				onLoad={onLoaded}
+			/>
+			{(!isLoaded || !imageDimensions) &&
+				(customLoadingComponent ? (
+					<View style={styles.customLoadingComponent}>
+						{customLoadingComponent}
+					</View>
+				) : !hideDefaultLoadingComponent ? (
+					<ImageLoading />
+				) : (
+					<View />
+				))}
+		</ScrollView>
+	)
+}
 
 const styles = StyleSheet.create({
-  listItem: {
-    width: SCREEN_WIDTH,
-    height: SCREEN_HEIGHT,
-  },
-  imageScrollContainer: {
-    height: SCREEN_HEIGHT * 2,
-  },
-});
+	listItem: {
+		width: SCREEN_WIDTH,
+		height: SCREEN_HEIGHT
+	},
+	imageScrollContainer: {
+		height: SCREEN_HEIGHT * 2
+	},
+	customLoadingComponent: {
+		position: 'absolute',
+		top: 0,
+		left: 0,
+		display: 'flex',
+		height: SCREEN_HEIGHT,
+		width: SCREEN_WIDTH,
+		alignItems: 'center',
+		justifyContent: 'center'
+	}
+})
 
-export default React.memo(ImageItem);
+export default React.memo(ImageItem)
