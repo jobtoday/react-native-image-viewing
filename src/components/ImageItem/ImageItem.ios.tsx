@@ -35,6 +35,7 @@ const SCREEN_HEIGHT = SCREEN.height;
 
 type Props = {
   imageSrc: ImageSource;
+  maxScale: number;
   onRequestClose: () => void;
   onZoom: (scaled: boolean) => void;
   onLongPress: (image: ImageSource) => void;
@@ -45,6 +46,7 @@ type Props = {
 
 const ImageItem = ({
   imageSrc,
+  maxScale,
   onZoom,
   onRequestClose,
   onLongPress,
@@ -62,7 +64,6 @@ const ImageItem = ({
   const scrollValueY = new Animated.Value(0);
   const scaleValue = new Animated.Value(scale || 1);
   const translateValue = new Animated.ValueXY(translate);
-  const maxScale = scale && scale > 0 ? Math.max(1 / scale, 1) : 1;
 
   const imageOpacity = scrollValueY.interpolate({
     inputRange: [-SWIPE_CLOSE_OFFSET, 0, SWIPE_CLOSE_OFFSET],
