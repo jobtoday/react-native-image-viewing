@@ -33,6 +33,7 @@ const SCREEN_HEIGHT = SCREEN.height;
 
 type Props = {
   imageSrc: ImageSource;
+  maxScale: number;
   onRequestClose: () => void;
   onZoom: (isZoomed: boolean) => void;
   onLongPress: (image: ImageSource) => void;
@@ -43,6 +44,7 @@ type Props = {
 
 const ImageItem = ({
   imageSrc,
+  maxScale,
   onZoom,
   onRequestClose,
   onLongPress,
@@ -120,6 +122,7 @@ const ImageItem = ({
     <ScrollView
       ref={imageContainer}
       style={styles.listItem}
+      maximumZoomScale={maxScale}
       pagingEnabled
       nestedScrollEnabled
       showsHorizontalScrollIndicator={false}

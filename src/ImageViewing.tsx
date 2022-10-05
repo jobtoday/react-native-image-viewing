@@ -31,6 +31,7 @@ type Props = {
   keyExtractor?: (imageSrc: ImageSource, index: number) => string;
   imageIndex: number;
   visible: boolean;
+  maxScale?: number;
   onRequestClose: () => void;
   onLongPress?: (image: ImageSource) => void;
   onImageIndexChange?: (imageIndex: number) => void;
@@ -47,6 +48,7 @@ type Props = {
 const DEFAULT_ANIMATION_TYPE = "fade";
 const DEFAULT_BG_COLOR = "#000";
 const DEFAULT_DELAY_LONG_PRESS = 800;
+const DEFAULT_MAX_SCALE = 3;
 const SCREEN = Dimensions.get("screen");
 const SCREEN_WIDTH = SCREEN.width;
 
@@ -55,6 +57,7 @@ function ImageViewing({
   keyExtractor,
   imageIndex,
   visible,
+  maxScale = DEFAULT_MAX_SCALE,
   onRequestClose,
   onLongPress = () => {},
   onImageIndexChange,
@@ -135,6 +138,7 @@ function ImageViewing({
             <ImageItem
               onZoom={onZoom}
               imageSrc={imageSrc}
+              maxScale={maxScale}
               onRequestClose={onRequestCloseEnhanced}
               onLongPress={onLongPress}
               delayLongPress={delayLongPress}
