@@ -70,6 +70,7 @@ export default function App() {
         <Text style={styles.name}>[ react-native-image-viewing ]</Text>
       </View>
       <ImageViewing
+        swipeCloseVelocity={0.5}
         images={getImageSource(images)}
         imageIndex={currentImageIndex}
         presentationStyle="overFullScreen"

@@ -42,6 +42,7 @@ type Props = {
   delayLongPress?: number;
   HeaderComponent?: ComponentType<{ imageIndex: number }>;
   FooterComponent?: ComponentType<{ imageIndex: number }>;
+  swipeCloseVelocity?:number;
 };
 
 const DEFAULT_ANIMATION_TYPE = "fade";
@@ -66,6 +67,7 @@ function ImageViewing({
   delayLongPress = DEFAULT_DELAY_LONG_PRESS,
   HeaderComponent,
   FooterComponent,
+  swipeCloseVelocity
 }: Props) {
   const imageList = useRef<VirtualizedList<ImageSource>>(null);
   const [opacity, onRequestCloseEnhanced] = useRequestClose(onRequestClose);
@@ -133,6 +135,7 @@ function ImageViewing({
           })}
           renderItem={({ item: imageSrc }) => (
             <ImageItem
+              swipeCloseVelocity={swipeCloseVelocity}
               onZoom={onZoom}
               imageSrc={imageSrc}
               onRequestClose={onRequestCloseEnhanced}

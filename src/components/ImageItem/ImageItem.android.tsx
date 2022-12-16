@@ -39,6 +39,7 @@ type Props = {
   delayLongPress: number;
   swipeToCloseEnabled?: boolean;
   doubleTapToZoomEnabled?: boolean;
+  swipeCloseVelocity?: number;
 };
 
 const ImageItem = ({
@@ -49,6 +50,7 @@ const ImageItem = ({
   delayLongPress,
   swipeToCloseEnabled = true,
   doubleTapToZoomEnabled = true,
+  swipeCloseVelocity
 }: Props) => {
   const imageContainer = useRef<ScrollView & NativeMethodsMixin>(null);
   const imageDimensions = useImageDimensions(imageSrc);
@@ -99,8 +101,10 @@ const ImageItem = ({
     const velocityY = nativeEvent?.velocity?.y ?? 0;
     const offsetY = nativeEvent?.contentOffset?.y ?? 0;
 
+    const swipeCloseVelocityThreshold = swipeCloseVelocity || SWIPE_CLOSE_VELOCITY;
+
     if (
-      (Math.abs(velocityY) > SWIPE_CLOSE_VELOCITY &&
+      (Math.abs(velocityY) > swipeCloseVelocityThreshold &&
         offsetY > SWIPE_CLOSE_OFFSET) ||
       offsetY > SCREEN_HEIGHT / 2
     ) {

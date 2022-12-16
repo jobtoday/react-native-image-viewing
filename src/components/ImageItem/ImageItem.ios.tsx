@@ -28,7 +28,7 @@ import { ImageSource } from "../../@types";
 import { ImageLoading } from "./ImageLoading";
 
 const SWIPE_CLOSE_OFFSET = 75;
-const SWIPE_CLOSE_VELOCITY = 1.55;
+const SWIPE_CLOSE_VELOCITY = 1;
 const SCREEN = Dimensions.get("screen");
 const SCREEN_WIDTH = SCREEN.width;
 const SCREEN_HEIGHT = SCREEN.height;
@@ -41,6 +41,7 @@ type Props = {
   delayLongPress: number;
   swipeToCloseEnabled?: boolean;
   doubleTapToZoomEnabled?: boolean;
+  swipeCloseVelocity?: number;
 };
 
 const ImageItem = ({
@@ -51,6 +52,7 @@ const ImageItem = ({
   delayLongPress,
   swipeToCloseEnabled = true,
   doubleTapToZoomEnabled = true,
+  swipeCloseVelocity
 }: Props) => {
   const scrollViewRef = useRef<ScrollView>(null);
   const [loaded, setLoaded] = useState(false);
@@ -83,10 +85,12 @@ const ImageItem = ({
       onZoom(scaled);
       setScaled(scaled);
 
+      const swipeCloseVelocityThreshold = swipeCloseVelocity || SWIPE_CLOSE_VELOCITY;
+
       if (
         !scaled &&
         swipeToCloseEnabled &&
-        Math.abs(velocityY) > SWIPE_CLOSE_VELOCITY
+        Math.abs(velocityY) > swipeCloseVelocityThreshold
       ) {
         onRequestClose();
       }

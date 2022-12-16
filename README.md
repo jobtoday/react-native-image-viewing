@@ -61,9 +61,9 @@ const [visible, setIsVisible] = useState(false);
 ## Props
 
 | Prop name                | Description                                                                                         | Type                                                        | Required |
-| ------------------------ | --------------------------------------------------------------------------------------------------- | ----------------------------------------------------------- | -------- |
+|--------------------------|-----------------------------------------------------------------------------------------------------|-------------------------------------------------------------| -------- |
 | `images`                 | Array of images to display                                                                          | ImageSource[]                                               | true     |
-| `keyExtractor`           | Uniqely identifying each image    | (imageSrc: ImageSource, index: number) => string | false |
+| `keyExtractor`           | Uniqely identifying each image                                                                      | (imageSrc: ImageSource, index: number) => string            | false |
 | `imageIndex`             | Current index of image to display                                                                   | number                                                      | true     |
 | `visible`                | Is modal shown or not                                                                               | boolean                                                     | true     |
 | `onRequestClose`         | Function called to close the modal                                                                  | function                                                    | true     |
@@ -74,6 +74,7 @@ const [visible, setIsVisible] = useState(false);
 | `presentationStyle`      | Modal presentation style: default: `fullScreen` **Android:** Use `overFullScreen` to hide StatusBar | `fullScreen`, `pageSheet`, `formSheet`, `overFullScreen`    | false    |
 | `backgroundColor`        | Background color of the modal in HEX (#000000EE)                                                    | string                                                      | false    |
 | `swipeToCloseEnabled`    | Close modal with swipe up or down: default `true`                                                   | boolean                                                     | false    |
+| `swipeCloseVelocity`     | Velocity threshold in order to dismiss the modal on swipe up or down                                | number                                                      | false    |
 | `doubleTapToZoomEnabled` | Zoom image by double tap on it: default `true`                                                      | boolean                                                     | false    |
 | `HeaderComponent`        | Header component, gets current `imageIndex` as a prop                                               | component, function                                         | false    |
 | `FooterComponent`        | Footer component, gets current `imageIndex` as a prop                                               | component, function                                         | false    |
