@@ -32,6 +32,7 @@ type Props = {
   imageIndex: number;
   visible: boolean;
   onRequestClose: () => void;
+  onPress?: (image: ImageSource) => void;
   onLongPress?: (image: ImageSource) => void;
   onImageIndexChange?: (imageIndex: number) => void;
   presentationStyle?: ModalProps["presentationStyle"];
@@ -42,11 +43,13 @@ type Props = {
   delayLongPress?: number;
   HeaderComponent?: ComponentType<{ imageIndex: number }>;
   FooterComponent?: ComponentType<{ imageIndex: number }>;
+  doubleTapDelay?: number;
 };
 
 const DEFAULT_ANIMATION_TYPE = "fade";
 const DEFAULT_BG_COLOR = "#000";
 const DEFAULT_DELAY_LONG_PRESS = 800;
+const DEFAULT_DOUBLE_TAP_DELAY = 300;
 const SCREEN = Dimensions.get("screen");
 const SCREEN_WIDTH = SCREEN.width;
 
@@ -56,6 +59,7 @@ function ImageViewing({
   imageIndex,
   visible,
   onRequestClose,
+  onPress = () => {},
   onLongPress = () => {},
   onImageIndexChange,
   animationType = DEFAULT_ANIMATION_TYPE,
@@ -66,6 +70,7 @@ function ImageViewing({
   delayLongPress = DEFAULT_DELAY_LONG_PRESS,
   HeaderComponent,
   FooterComponent,
+  doubleTapDelay = DEFAULT_DOUBLE_TAP_DELAY
 }: Props) {
   const imageList = useRef<VirtualizedList<ImageSource>>(null);
   const [opacity, onRequestCloseEnhanced] = useRequestClose(onRequestClose);
@@ -136,10 +141,12 @@ function ImageViewing({
               onZoom={onZoom}
               imageSrc={imageSrc}
               onRequestClose={onRequestCloseEnhanced}
+              onPress={onPress}
               onLongPress={onLongPress}
               delayLongPress={delayLongPress}
               swipeToCloseEnabled={swipeToCloseEnabled}
               doubleTapToZoomEnabled={doubleTapToZoomEnabled}
+              doubleTapDelay={doubleTapDelay}
             />
           )}
           onMomentumScrollEnd={onScroll}

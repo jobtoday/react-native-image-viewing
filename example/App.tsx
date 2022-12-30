@@ -50,8 +50,13 @@ export default function App() {
         : { uri: image.original as string }
     )
   );
+
   const onLongPress = (image) => {
     Alert.alert("Long Pressed", image.uri);
+  };
+
+  const onSinglePress = (image) => {
+    Alert.alert("Single Pressed", image.uri);
   };
 
   return (
@@ -75,6 +80,7 @@ export default function App() {
         presentationStyle="overFullScreen"
         visible={isVisible}
         onRequestClose={onRequestClose}
+        onPress={onSinglePress}
         onLongPress={onLongPress}
         HeaderComponent={
           images === travel

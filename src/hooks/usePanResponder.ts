@@ -6,7 +6,7 @@
  *
  */
 
-import { useMemo, useEffect, useRef } from "react";
+import { useMemo, useEffect } from "react";
 import {
   Animated,
   Dimensions,
@@ -30,7 +30,6 @@ const SCREEN_HEIGHT = SCREEN.height;
 const MIN_DIMENSION = Math.min(SCREEN_WIDTH, SCREEN_HEIGHT);
 
 const SCALE_MAX = 2;
-const DOUBLE_TAP_DELAY = 300;
 const OUT_BOUND_MULTIPLIER = 0.75;
 
 type Props = {
@@ -40,6 +39,8 @@ type Props = {
   doubleTapToZoomEnabled: boolean;
   onLongPress: () => void;
   delayLongPress: number;
+  onPress: () => void;
+  doubleTapDelay: number
 };
 
 const usePanResponder = ({
@@ -49,6 +50,8 @@ const usePanResponder = ({
   doubleTapToZoomEnabled,
   onLongPress,
   delayLongPress,
+  onPress,
+  doubleTapDelay,
 }: Props): Readonly<
   [GestureResponderHandlers, Animated.Value, Animated.ValueXY]
 > => {
@@ -61,6 +64,7 @@ const usePanResponder = ({
   let isDoubleTapPerformed = false;
   let lastTapTS: number | null = null;
   let longPressHandlerRef: number | null = null;
+  let singlePressHandlerRef: number | null = null;
 
   const meaningfulShift = MIN_DIMENSION * 0.01;
   const scaleValue = new Animated.Value(initialScale);
@@ -124,6 +128,10 @@ const usePanResponder = ({
     longPressHandlerRef && clearTimeout(longPressHandlerRef);
   };
 
+  const cancelSinglePressTimer = () => {
+    singlePressHandlerRef && clearTimeout(singlePressHandlerRef)
+  };
+
   const handlers = {
     onGrant: (
       _: GestureResponderEvent,
@@ -139,6 +147,8 @@ const usePanResponder = ({
       event: GestureResponderEvent,
       gestureState: PanResponderGestureState
     ) => {
+      cancelSinglePressTimer()
+
       initialTouches = event.nativeEvent.touches;
       numberInitialTouches = gestureState.numberActiveTouches;
 
@@ -148,7 +158,7 @@ const usePanResponder = ({
       // Handle double tap event by calculating diff between first and second taps timestamps
 
       isDoubleTapPerformed = Boolean(
-        lastTapTS && tapTS - lastTapTS < DOUBLE_TAP_DELAY
+        lastTapTS && tapTS - lastTapTS < doubleTapDelay
       );
 
       if (doubleTapToZoomEnabled && isDoubleTapPerformed) {
@@ -199,6 +209,8 @@ const usePanResponder = ({
         lastTapTS = null;
       } else {
         lastTapTS = Date.now();
+
+        singlePressHandlerRef = setTimeout(onPress, doubleTapDelay)
       }
     },
     onMove: (
@@ -209,11 +221,13 @@ const usePanResponder = ({
 
       if (Math.abs(dx) >= meaningfulShift || Math.abs(dy) >= meaningfulShift) {
         cancelLongPressHandle();
+        cancelSinglePressTimer();
       }
 
       // Don't need to handle move because double tap in progress (was handled in onStart)
       if (doubleTapToZoomEnabled && isDoubleTapPerformed) {
         cancelLongPressHandle();
+        cancelSinglePressTimer();
         return;
       }
 
@@ -326,6 +340,7 @@ const usePanResponder = ({
     },
     onRelease: () => {
       cancelLongPressHandle();
+      cancelSinglePressTimer();
 
       if (isDoubleTapPerformed) {
         isDoubleTapPerformed = false;
