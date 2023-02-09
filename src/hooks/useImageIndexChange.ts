@@ -26,7 +26,7 @@ const useImageIndexChange = (imageIndex: number, screen: Dimensions) => {
     }
   };
 
-  return [currentImageIndex, onScroll] as const;
+  return [currentImageIndex, onScroll, setImageIndex] as const;
 };
 
 export default useImageIndexChange;
