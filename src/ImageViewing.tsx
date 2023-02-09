@@ -69,7 +69,7 @@ function ImageViewing({
 }: Props) {
   const imageList = useRef<VirtualizedList<ImageSource>>(null);
   const [opacity, onRequestCloseEnhanced] = useRequestClose(onRequestClose);
-  const [currentImageIndex, onScroll] = useImageIndexChange(imageIndex, SCREEN);
+  const [currentImageIndex, onScroll, setImageIndex] = useImageIndexChange(imageIndex, SCREEN);
   const [headerTransform, footerTransform, toggleBarsVisible] =
     useAnimatedComponents();
 
@@ -78,7 +78,13 @@ function ImageViewing({
       onImageIndexChange(currentImageIndex);
     }
   }, [currentImageIndex]);
-
+  
+  useEffect(() => {
+    if(!visible) {
+      setImageIndex(imageIndex);
+    }
+  },[visible, setImageIndex]);
+  
   const onZoom = useCallback(
     (isScaled: boolean) => {
       // @ts-ignore
