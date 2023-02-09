@@ -83,7 +83,7 @@ function ImageViewing({
     if(!visible) {
       setImageIndex(imageIndex);
     }
-  },[visible, setImageIndex]);
+  }, [visible, setImageIndex]);
   
   const onZoom = useCallback(
     (isScaled: boolean) => {
