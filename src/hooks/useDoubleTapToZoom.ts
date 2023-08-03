@@ -18,6 +18,8 @@ import { Dimensions } from "../@types";
 const DOUBLE_TAP_DELAY = 300;
 let lastTapTS: number | null = null;
 
+let isWaitingToSendSinglePress = false;
+
 /**
  * This is iOS only.
  * Same functionality for Android implemented inside usePanResponder hook.
@@ -25,7 +27,8 @@ let lastTapTS: number | null = null;
 function useDoubleTapToZoom(
   scrollViewRef: React.RefObject<ScrollView>,
   scaled: boolean,
-  screen: Dimensions
+  screen: Dimensions,
+  onPress: () => void
 ) {
   const handleDoubleTap = useCallback(
     (event: NativeSyntheticEvent<NativeTouchEvent>) => {
@@ -33,6 +36,7 @@ function useDoubleTapToZoom(
       const scrollResponderRef = scrollViewRef?.current?.getScrollResponder();
 
       if (lastTapTS && nowTS - lastTapTS < DOUBLE_TAP_DELAY) {
+        isWaitingToSendSinglePress = false;
         const { pageX, pageY } = event.nativeEvent;
         let targetX = 0;
         let targetY = 0;
@@ -58,6 +62,15 @@ function useDoubleTapToZoom(
         });
       } else {
         lastTapTS = nowTS;
+
+        if (!isWaitingToSendSinglePress) {
+          isWaitingToSendSinglePress = true;
+          setTimeout(() => {
+            if (!isWaitingToSendSinglePress) return;
+            isWaitingToSendSinglePress = false;
+            onPress();
+          }, DOUBLE_TAP_DELAY);
+        }
       }
     },
     [scaled]
