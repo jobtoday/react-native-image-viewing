@@ -15,6 +15,7 @@ import {
   VirtualizedList,
   ModalProps,
   Modal,
+  TouchableWithoutFeedback,
 } from "react-native";
 
 import ImageItem from "./components/ImageItem/ImageItem";
@@ -33,6 +34,7 @@ type Props = {
   visible: boolean;
   onRequestClose: () => void;
   onLongPress?: (image: ImageSource) => void;
+  onPress?: (image: ImageSource) => void;
   onImageIndexChange?: (imageIndex: number) => void;
   presentationStyle?: ModalProps["presentationStyle"];
   animationType?: ModalProps["animationType"];
@@ -57,6 +59,7 @@ function ImageViewing({
   visible,
   onRequestClose,
   onLongPress = () => {},
+  onPress = () => {},
   onImageIndexChange,
   animationType = DEFAULT_ANIMATION_TYPE,
   backgroundColor = DEFAULT_BG_COLOR,
@@ -103,65 +106,71 @@ function ImageViewing({
       hardwareAccelerated
     >
       <StatusBarManager presentationStyle={presentationStyle} />
-      <View style={[styles.container, { opacity, backgroundColor }]}>
-        <Animated.View style={[styles.header, { transform: headerTransform }]}>
-          {typeof HeaderComponent !== "undefined" ? (
-            React.createElement(HeaderComponent, {
-              imageIndex: currentImageIndex,
-            })
-          ) : (
-            <ImageDefaultHeader onRequestClose={onRequestCloseEnhanced} />
-          )}
-        </Animated.View>
-        <VirtualizedList
-          ref={imageList}
-          data={images}
-          horizontal
-          pagingEnabled
-          windowSize={2}
-          initialNumToRender={1}
-          maxToRenderPerBatch={1}
-          showsHorizontalScrollIndicator={false}
-          showsVerticalScrollIndicator={false}
-          initialScrollIndex={imageIndex}
-          getItem={(_, index) => images[index]}
-          getItemCount={() => images.length}
-          getItemLayout={(_, index) => ({
-            length: SCREEN_WIDTH,
-            offset: SCREEN_WIDTH * index,
-            index,
-          })}
-          renderItem={({ item: imageSrc }) => (
-            <ImageItem
-              onZoom={onZoom}
-              imageSrc={imageSrc}
-              onRequestClose={onRequestCloseEnhanced}
-              onLongPress={onLongPress}
-              delayLongPress={delayLongPress}
-              swipeToCloseEnabled={swipeToCloseEnabled}
-              doubleTapToZoomEnabled={doubleTapToZoomEnabled}
-            />
-          )}
-          onMomentumScrollEnd={onScroll}
-          //@ts-ignore
-          keyExtractor={(imageSrc, index) =>
-            keyExtractor
-              ? keyExtractor(imageSrc, index)
-              : typeof imageSrc === "number"
-              ? `${imageSrc}`
-              : imageSrc.uri
-          }
-        />
-        {typeof FooterComponent !== "undefined" && (
+      <TouchableWithoutFeedback
+        onPress={() => onPress(images[currentImageIndex])}
+      >
+        <View style={[styles.container, { opacity, backgroundColor }]}>
           <Animated.View
-            style={[styles.footer, { transform: footerTransform }]}
+            style={[styles.header, { transform: headerTransform }]}
           >
-            {React.createElement(FooterComponent, {
-              imageIndex: currentImageIndex,
-            })}
+            {typeof HeaderComponent !== "undefined" ? (
+              React.createElement(HeaderComponent, {
+                imageIndex: currentImageIndex,
+              })
+            ) : (
+              <ImageDefaultHeader onRequestClose={onRequestCloseEnhanced} />
+            )}
           </Animated.View>
-        )}
-      </View>
+          <VirtualizedList
+            ref={imageList}
+            data={images}
+            horizontal
+            pagingEnabled
+            windowSize={2}
+            initialNumToRender={1}
+            maxToRenderPerBatch={1}
+            showsHorizontalScrollIndicator={false}
+            showsVerticalScrollIndicator={false}
+            initialScrollIndex={imageIndex}
+            getItem={(_, index) => images[index]}
+            getItemCount={() => images.length}
+            getItemLayout={(_, index) => ({
+              length: SCREEN_WIDTH,
+              offset: SCREEN_WIDTH * index,
+              index,
+            })}
+            renderItem={({ item: imageSrc }) => (
+              <ImageItem
+                onZoom={onZoom}
+                imageSrc={imageSrc}
+                onRequestClose={onRequestCloseEnhanced}
+                onLongPress={onLongPress}
+                delayLongPress={delayLongPress}
+                swipeToCloseEnabled={swipeToCloseEnabled}
+                doubleTapToZoomEnabled={doubleTapToZoomEnabled}
+              />
+            )}
+            onMomentumScrollEnd={onScroll}
+            //@ts-ignore
+            keyExtractor={(imageSrc, index) =>
+              keyExtractor
+                ? keyExtractor(imageSrc, index)
+                : typeof imageSrc === "number"
+                ? `${imageSrc}`
+                : imageSrc.uri
+            }
+          />
+          {typeof FooterComponent !== "undefined" && (
+            <Animated.View
+              style={[styles.footer, { transform: footerTransform }]}
+            >
+              {React.createElement(FooterComponent, {
+                imageIndex: currentImageIndex,
+              })}
+            </Animated.View>
+          )}
+        </View>
+      </TouchableWithoutFeedback>
     </Modal>
   );
 }
