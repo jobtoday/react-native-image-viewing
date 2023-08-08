@@ -33,12 +33,15 @@ const SCALE_MAX = 2;
 const DOUBLE_TAP_DELAY = 300;
 const OUT_BOUND_MULTIPLIER = 0.75;
 
+let isWaitingToSendSinglePress = false;
+
 type Props = {
   initialScale: number;
   initialTranslate: Position;
   onZoom: (isZoomed: boolean) => void;
   doubleTapToZoomEnabled: boolean;
   onLongPress: () => void;
+  onPress: () => void;
   delayLongPress: number;
 };
 
@@ -48,6 +51,7 @@ const usePanResponder = ({
   onZoom,
   doubleTapToZoomEnabled,
   onLongPress,
+  onPress,
   delayLongPress,
 }: Props): Readonly<
   [GestureResponderHandlers, Animated.Value, Animated.ValueXY]
@@ -152,6 +156,7 @@ const usePanResponder = ({
       );
 
       if (doubleTapToZoomEnabled && isDoubleTapPerformed) {
+        isWaitingToSendSinglePress = false;
         const isScaled = currentTranslate.x !== initialTranslate.x; // currentScale !== initialScale;
         const { pageX: touchX, pageY: touchY } = event.nativeEvent.touches[0];
         const targetScale = SCALE_MAX;
@@ -199,6 +204,17 @@ const usePanResponder = ({
         lastTapTS = null;
       } else {
         lastTapTS = Date.now();
+
+        if (!isWaitingToSendSinglePress) {
+          console.log("creating timeout");
+          isWaitingToSendSinglePress = true;
+          setTimeout(() => {
+            console.log("in timeout to send event", isWaitingToSendSinglePress);
+            if (!isWaitingToSendSinglePress) return;
+            isWaitingToSendSinglePress = false;
+            onPress();
+          }, DOUBLE_TAP_DELAY);
+        }
       }
     },
     onMove: (
@@ -208,11 +224,14 @@ const usePanResponder = ({
       const { dx, dy } = gestureState;
 
       if (Math.abs(dx) >= meaningfulShift || Math.abs(dy) >= meaningfulShift) {
+        console.log("onMove meaningfully");
+        isWaitingToSendSinglePress = false;
         cancelLongPressHandle();
       }
 
       // Don't need to handle move because double tap in progress (was handled in onStart)
       if (doubleTapToZoomEnabled && isDoubleTapPerformed) {
+        isWaitingToSendSinglePress = false;
         cancelLongPressHandle();
         return;
       }
@@ -232,6 +251,7 @@ const usePanResponder = ({
 
       if (isPinchGesture) {
         cancelLongPressHandle();
+        isWaitingToSendSinglePress = false;
 
         const initialDistance = getDistanceBetweenTouches(initialTouches);
         const currentDistance = getDistanceBetweenTouches(
@@ -280,9 +300,8 @@ const usePanResponder = ({
       if (isTapGesture && currentScale > initialScale) {
         const { x, y } = currentTranslate;
         const { dx, dy } = gestureState;
-        const [topBound, leftBound, bottomBound, rightBound] = getBounds(
-          currentScale
-        );
+        const [topBound, leftBound, bottomBound, rightBound] =
+          getBounds(currentScale);
 
         let nextTranslateX = x + dx;
         let nextTranslateY = y + dy;
@@ -324,6 +343,7 @@ const usePanResponder = ({
         tmpTranslate = { x: nextTranslateX, y: nextTranslateY };
       }
     },
+
     onRelease: () => {
       cancelLongPressHandle();
 
@@ -347,9 +367,8 @@ const usePanResponder = ({
 
       if (tmpTranslate) {
         const { x, y } = tmpTranslate;
-        const [topBound, leftBound, bottomBound, rightBound] = getBounds(
-          currentScale
-        );
+        const [topBound, leftBound, bottomBound, rightBound] =
+          getBounds(currentScale);
 
         let nextTranslateX = x;
         let nextTranslateY = y;
