@@ -15,6 +15,7 @@ import {
   VirtualizedList,
   ModalProps,
   Modal,
+  TouchableWithoutFeedback,
 } from "react-native";
 
 import ImageItem from "./components/ImageItem/ImageItem";
@@ -33,6 +34,7 @@ type Props = {
   visible: boolean;
   onRequestClose: () => void;
   onLongPress?: (image: ImageSource) => void;
+  onPress?: (image: ImageSource) => void;
   onImageIndexChange?: (imageIndex: number) => void;
   presentationStyle?: ModalProps["presentationStyle"];
   animationType?: ModalProps["animationType"];
@@ -57,6 +59,7 @@ function ImageViewing({
   visible,
   onRequestClose,
   onLongPress = () => {},
+  onPress = () => {},
   onImageIndexChange,
   animationType = DEFAULT_ANIMATION_TYPE,
   backgroundColor = DEFAULT_BG_COLOR,
@@ -70,7 +73,7 @@ function ImageViewing({
   const imageList = useRef<VirtualizedList<ImageSource>>(null);
   const [opacity, onRequestCloseEnhanced] = useRequestClose(onRequestClose);
   const [currentImageIndex, onScroll] = useImageIndexChange(imageIndex, SCREEN);
-  const [headerTransform, footerTransform, toggleBarsVisible] =
+  const [headerTransform, footerTransform, setBarsVisible, toggleBarsVisible] =
     useAnimatedComponents();
 
   useEffect(() => {
@@ -83,10 +86,15 @@ function ImageViewing({
     (isScaled: boolean) => {
       // @ts-ignore
       imageList?.current?.setNativeProps({ scrollEnabled: !isScaled });
-      toggleBarsVisible(!isScaled);
+      setBarsVisible(!isScaled);
     },
     [imageList]
   );
+
+  const onPressHandler = (src: ImageSource) => {
+    onPress(src);
+    toggleBarsVisible();
+  };
 
   if (!visible) {
     return null;
@@ -103,6 +111,7 @@ function ImageViewing({
       hardwareAccelerated
     >
       <StatusBarManager presentationStyle={presentationStyle} />
+
       <View style={[styles.container, { opacity, backgroundColor }]}>
         <Animated.View style={[styles.header, { transform: headerTransform }]}>
           {typeof HeaderComponent !== "undefined" ? (
@@ -137,6 +146,7 @@ function ImageViewing({
               imageSrc={imageSrc}
               onRequestClose={onRequestCloseEnhanced}
               onLongPress={onLongPress}
+              onPress={onPressHandler}
               delayLongPress={delayLongPress}
               swipeToCloseEnabled={swipeToCloseEnabled}
               doubleTapToZoomEnabled={doubleTapToZoomEnabled}
