@@ -140,6 +140,7 @@ function ImageViewing({
               delayLongPress={delayLongPress}
               swipeToCloseEnabled={swipeToCloseEnabled}
               doubleTapToZoomEnabled={doubleTapToZoomEnabled}
+              currentImageIndex={currentImageIndex}
             />
           )}
           onMomentumScrollEnd={onScroll}
