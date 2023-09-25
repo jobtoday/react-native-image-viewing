@@ -32,6 +32,7 @@ type Props = {
   imageIndex: number;
   visible: boolean;
   onRequestClose: () => void;
+  onPress?: (image: ImageSource) => void;
   onLongPress?: (image: ImageSource) => void;
   onImageIndexChange?: (imageIndex: number) => void;
   presentationStyle?: ModalProps["presentationStyle"];
@@ -56,6 +57,7 @@ function ImageViewing({
   imageIndex,
   visible,
   onRequestClose,
+  onPress = () => {},
   onLongPress = () => {},
   onImageIndexChange,
   animationType = DEFAULT_ANIMATION_TYPE,
@@ -70,7 +72,7 @@ function ImageViewing({
   const imageList = useRef<VirtualizedList<ImageSource>>(null);
   const [opacity, onRequestCloseEnhanced] = useRequestClose(onRequestClose);
   const [currentImageIndex, onScroll] = useImageIndexChange(imageIndex, SCREEN);
-  const [headerTransform, footerTransform, toggleBarsVisible] =
+  const [headerTransform, footerTransform, setBarsVisibility, toggleBarsVisible] =
     useAnimatedComponents();
 
   useEffect(() => {
@@ -83,10 +85,15 @@ function ImageViewing({
     (isScaled: boolean) => {
       // @ts-ignore
       imageList?.current?.setNativeProps({ scrollEnabled: !isScaled });
-      toggleBarsVisible(!isScaled);
+      setBarsVisibility(!isScaled);
     },
     [imageList]
   );
+
+  const onPressHandler = useCallback((src: ImageSource) => {
+    onPress(src);
+    toggleBarsVisible();
+  }, [onPress, toggleBarsVisible]);
 
   if (!visible) {
     return null;
@@ -136,6 +143,7 @@ function ImageViewing({
               onZoom={onZoom}
               imageSrc={imageSrc}
               onRequestClose={onRequestCloseEnhanced}
+              onPress={onPressHandler}
               onLongPress={onLongPress}
               delayLongPress={delayLongPress}
               swipeToCloseEnabled={swipeToCloseEnabled}

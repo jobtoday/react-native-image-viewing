@@ -32,12 +32,14 @@ const MIN_DIMENSION = Math.min(SCREEN_WIDTH, SCREEN_HEIGHT);
 const SCALE_MAX = 2;
 const DOUBLE_TAP_DELAY = 300;
 const OUT_BOUND_MULTIPLIER = 0.75;
+let isWaitingToSendSinglePress = false;
 
 type Props = {
   initialScale: number;
   initialTranslate: Position;
   onZoom: (isZoomed: boolean) => void;
   doubleTapToZoomEnabled: boolean;
+  onPress: () => void;
   onLongPress: () => void;
   delayLongPress: number;
 };
@@ -47,6 +49,7 @@ const usePanResponder = ({
   initialTranslate,
   onZoom,
   doubleTapToZoomEnabled,
+  onPress,
   onLongPress,
   delayLongPress,
 }: Props): Readonly<
@@ -121,6 +124,7 @@ const usePanResponder = ({
   });
 
   const cancelLongPressHandle = () => {
+    isWaitingToSendSinglePress = false;
     longPressHandlerRef && clearTimeout(longPressHandlerRef);
   };
 
@@ -199,6 +203,15 @@ const usePanResponder = ({
         lastTapTS = null;
       } else {
         lastTapTS = Date.now();
+        if (!isWaitingToSendSinglePress) {
+          isWaitingToSendSinglePress = true;
+          setTimeout(() => {
+            if (isWaitingToSendSinglePress) {
+              isWaitingToSendSinglePress = false;
+              onPress();
+            }
+          }, DOUBLE_TAP_DELAY);
+        }
       }
     },
     onMove: (

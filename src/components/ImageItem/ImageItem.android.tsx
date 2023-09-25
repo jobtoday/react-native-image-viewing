@@ -35,6 +35,7 @@ type Props = {
   imageSrc: ImageSource;
   onRequestClose: () => void;
   onZoom: (isZoomed: boolean) => void;
+  onPress: (image: ImageSource) => void;
   onLongPress: (image: ImageSource) => void;
   delayLongPress: number;
   swipeToCloseEnabled?: boolean;
@@ -45,6 +46,7 @@ const ImageItem = ({
   imageSrc,
   onZoom,
   onRequestClose,
+  onPress,
   onLongPress,
   delayLongPress,
   swipeToCloseEnabled = true,
@@ -73,11 +75,16 @@ const ImageItem = ({
     onLongPress(imageSrc);
   }, [imageSrc, onLongPress]);
 
+  const onPressHandler = useCallback(() => {
+    onPress(imageSrc);
+  }, [imageSrc, onLongPress]);
+
   const [panHandlers, scaleValue, translateValue] = usePanResponder({
     initialScale: scale || 1,
     initialTranslate: translate || { x: 0, y: 0 },
     onZoom: onZoomPerformed,
     doubleTapToZoomEnabled,
+    onPress: onPressHandler,
     onLongPress: onLongPressHandler,
     delayLongPress,
   });

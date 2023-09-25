@@ -6,6 +6,7 @@
  *
  */
 
+import { useRef } from "react";
 import { Animated } from "react-native";
 
 const INITIAL_POSITION = { x: 0, y: 0 };
@@ -15,33 +16,39 @@ const ANIMATION_CONFIG = {
 };
 
 const useAnimatedComponents = () => {
-  const headerTranslate = new Animated.ValueXY(INITIAL_POSITION);
-  const footerTranslate = new Animated.ValueXY(INITIAL_POSITION);
+  const headerTranslate = useRef(new Animated.ValueXY(INITIAL_POSITION));
+  const footerTranslate = useRef(new Animated.ValueXY(INITIAL_POSITION));
 
-  const toggleVisible = (isVisible: boolean) => {
-    if (isVisible) {
+  const isVisible = useRef(true);
+
+  const setVisibility = (makeVisible: boolean) => {
+    if (makeVisible) {
       Animated.parallel([
-        Animated.timing(headerTranslate.y, { ...ANIMATION_CONFIG, toValue: 0 }),
-        Animated.timing(footerTranslate.y, { ...ANIMATION_CONFIG, toValue: 0 }),
-      ]).start();
+        Animated.timing(headerTranslate.current.y, { ...ANIMATION_CONFIG, toValue: 0 }),
+        Animated.timing(footerTranslate.current.y, { ...ANIMATION_CONFIG, toValue: 0 }),
+      ]).start(() => (isVisible.current = true));
     } else {
       Animated.parallel([
-        Animated.timing(headerTranslate.y, {
+        Animated.timing(headerTranslate.current.y, {
           ...ANIMATION_CONFIG,
           toValue: -300,
         }),
-        Animated.timing(footerTranslate.y, {
+        Animated.timing(footerTranslate.current.y, {
           ...ANIMATION_CONFIG,
           toValue: 300,
         }),
-      ]).start();
+      ]).start(() => (isVisible.current = false));
     }
   };
 
-  const headerTransform = headerTranslate.getTranslateTransform();
-  const footerTransform = footerTranslate.getTranslateTransform();
+  const toggleIsVisible = () => {
+    setVisibility(!isVisible.current);
+  }
 
-  return [headerTransform, footerTransform, toggleVisible] as const;
+  const headerTransform = headerTranslate.current.getTranslateTransform();
+  const footerTransform = footerTranslate.current.getTranslateTransform();
+
+  return [headerTransform, footerTransform, setVisibility, toggleIsVisible] as const;
 };
 
 export default useAnimatedComponents;
