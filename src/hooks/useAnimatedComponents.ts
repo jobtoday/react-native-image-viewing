@@ -10,6 +10,7 @@ import { useRef } from "react";
 import { Animated } from "react-native";
 
 const INITIAL_POSITION = { x: 0, y: 0 };
+const INITIAL_OPACITY = 1;
 const ANIMATION_CONFIG = {
   duration: 200,
   useNativeDriver: true,
@@ -18,6 +19,7 @@ const ANIMATION_CONFIG = {
 const useAnimatedComponents = () => {
   const headerTranslate = useRef(new Animated.ValueXY(INITIAL_POSITION));
   const footerTranslate = useRef(new Animated.ValueXY(INITIAL_POSITION));
+  const opacity = useRef(new Animated.Value(INITIAL_OPACITY)).current;
 
   const isVisible = useRef(true);
 
@@ -26,6 +28,7 @@ const useAnimatedComponents = () => {
       Animated.parallel([
         Animated.timing(headerTranslate.current.y, { ...ANIMATION_CONFIG, toValue: 0 }),
         Animated.timing(footerTranslate.current.y, { ...ANIMATION_CONFIG, toValue: 0 }),
+        Animated.timing(opacity, { ...ANIMATION_CONFIG, toValue: 1 }),
       ]).start(() => (isVisible.current = true));
     } else {
       Animated.parallel([
@@ -37,6 +40,7 @@ const useAnimatedComponents = () => {
           ...ANIMATION_CONFIG,
           toValue: 300,
         }),
+        Animated.timing(opacity, { ...ANIMATION_CONFIG, toValue: 0 }),
       ]).start(() => (isVisible.current = false));
     }
   };
@@ -48,7 +52,7 @@ const useAnimatedComponents = () => {
   const headerTransform = headerTranslate.current.getTranslateTransform();
   const footerTransform = footerTranslate.current.getTranslateTransform();
 
-  return [headerTransform, footerTransform, setVisibility, toggleIsVisible] as const;
+  return [headerTransform, footerTransform, opacity, setVisibility, toggleIsVisible] as const;
 };
 
 export default useAnimatedComponents;

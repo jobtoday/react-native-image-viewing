@@ -6,7 +6,7 @@
  *
  */
 
-import React, { ComponentType, useCallback, useRef, useEffect } from "react";
+import React, {ComponentType, useCallback, useRef, useEffect, useMemo} from "react";
 import {
   Animated,
   Dimensions,
@@ -43,9 +43,11 @@ type Props = {
   delayLongPress?: number;
   HeaderComponent?: ComponentType<{ imageIndex: number }>;
   FooterComponent?: ComponentType<{ imageIndex: number }>;
+  headerAndFooterAnimation?: "slide" | "fade";
 };
 
 const DEFAULT_ANIMATION_TYPE = "fade";
+const DEFAULT_HEADER_FOOTER_ANIMATION = "slide";
 const DEFAULT_BG_COLOR = "#000";
 const DEFAULT_DELAY_LONG_PRESS = 800;
 const SCREEN = Dimensions.get("screen");
@@ -68,12 +70,32 @@ function ImageViewing({
   delayLongPress = DEFAULT_DELAY_LONG_PRESS,
   HeaderComponent,
   FooterComponent,
+  headerAndFooterAnimation = DEFAULT_HEADER_FOOTER_ANIMATION,
 }: Props) {
   const imageList = useRef<VirtualizedList<ImageSource>>(null);
   const [opacity, onRequestCloseEnhanced] = useRequestClose(onRequestClose);
   const [currentImageIndex, onScroll] = useImageIndexChange(imageIndex, SCREEN);
-  const [headerTransform, footerTransform, setBarsVisibility, toggleBarsVisible] =
+  const [headerTransform, footerTransform, barsOpacity, setBarsVisibility, toggleBarsVisible] =
     useAnimatedComponents();
+
+  const headerAnimation = useMemo(() => (
+    headerAndFooterAnimation === "slide"
+      ? {
+        transform: headerTransform,
+      }: {
+        opacity: barsOpacity,
+      }),
+    [headerAndFooterAnimation])
+
+  const footerAnimation = useMemo(() => (
+      headerAndFooterAnimation === "slide"
+        ? {
+          transform: footerTransform,
+        }: {
+          opacity: barsOpacity,
+        }),
+    [headerAndFooterAnimation])
+
 
   useEffect(() => {
     if (onImageIndexChange) {
@@ -111,7 +133,7 @@ function ImageViewing({
     >
       <StatusBarManager presentationStyle={presentationStyle} />
       <View style={[styles.container, { opacity, backgroundColor }]}>
-        <Animated.View style={[styles.header, { transform: headerTransform }]}>
+        <Animated.View style={[styles.header, headerAnimation]}>
           {typeof HeaderComponent !== "undefined" ? (
             React.createElement(HeaderComponent, {
               imageIndex: currentImageIndex,
@@ -162,7 +184,7 @@ function ImageViewing({
         />
         {typeof FooterComponent !== "undefined" && (
           <Animated.View
-            style={[styles.footer, { transform: footerTransform }]}
+            style={[styles.footer, footerAnimation]}
           >
             {React.createElement(FooterComponent, {
               imageIndex: currentImageIndex,
