@@ -6,7 +6,7 @@
  *
  */
 
-import React, { useCallback, useRef, useState } from "react";
+import React, { ComponentType, useCallback, useRef, useState } from "react";
 
 import {
   Animated,
@@ -25,7 +25,7 @@ import { getImageStyles, getImageTransform } from "../../utils";
 import { ImageSource } from "../../@types";
 import { ImageLoading } from "./ImageLoading";
 
-const SWIPE_CLOSE_OFFSET = 75;
+export const SWIPE_CLOSE_OFFSET = 75;
 const SWIPE_CLOSE_VELOCITY = 1.75;
 const SCREEN = Dimensions.get("window");
 const SCREEN_WIDTH = SCREEN.width;
@@ -36,9 +36,17 @@ type Props = {
   onRequestClose: () => void;
   onZoom: (isZoomed: boolean) => void;
   onLongPress: (image: ImageSource) => void;
+  onPress: (image: ImageSource) => void;
   delayLongPress: number;
   swipeToCloseEnabled?: boolean;
   doubleTapToZoomEnabled?: boolean;
+  onScroll: (offsetY: number) => void;
+  LoaderComponent?: ComponentType;
+  ItemComponent?: ComponentType<{
+    onLoad?: () => void;
+    source: ImageSource;
+    style: any;
+  }>;
 };
 
 const ImageItem = ({
@@ -46,9 +54,13 @@ const ImageItem = ({
   onZoom,
   onRequestClose,
   onLongPress,
+  onPress,
+  onScroll,
   delayLongPress,
   swipeToCloseEnabled = true,
   doubleTapToZoomEnabled = true,
+  LoaderComponent,
+  ItemComponent,
 }: Props) => {
   const imageContainer = useRef<ScrollView & NativeMethodsMixin>(null);
   const imageDimensions = useImageDimensions(imageSrc);
@@ -73,6 +85,10 @@ const ImageItem = ({
     onLongPress(imageSrc);
   }, [imageSrc, onLongPress]);
 
+  const onPressHandler = useCallback(() => {
+    onPress(imageSrc);
+  }, [imageSrc, onLongPress]);
+
   const [panHandlers, scaleValue, translateValue] = usePanResponder({
     initialScale: scale || 1,
     initialTranslate: translate || { x: 0, y: 0 },
@@ -80,6 +96,7 @@ const ImageItem = ({
     doubleTapToZoomEnabled,
     onLongPress: onLongPressHandler,
     delayLongPress,
+    onPress: onPressHandler,
   });
 
   const imagesStyles = getImageStyles(
@@ -108,12 +125,13 @@ const ImageItem = ({
     }
   };
 
-  const onScroll = ({
+  const handleScroll = ({
     nativeEvent,
   }: NativeSyntheticEvent<NativeScrollEvent>) => {
     const offsetY = nativeEvent?.contentOffset?.y ?? 0;
 
     scrollValueY.setValue(offsetY);
+    onScroll(offsetY);
   };
 
   return (
@@ -127,17 +145,29 @@ const ImageItem = ({
       contentContainerStyle={styles.imageScrollContainer}
       scrollEnabled={swipeToCloseEnabled}
       {...(swipeToCloseEnabled && {
-        onScroll,
+        onScroll: handleScroll,
         onScrollEndDrag,
       })}
     >
-      <Animated.Image
-        {...panHandlers}
-        source={imageSrc}
-        style={imageStylesWithOpacity}
-        onLoad={onLoaded}
-      />
-      {(!isLoaded || !imageDimensions) && <ImageLoading />}
+      {ItemComponent ? (
+        React.createElement(ItemComponent, {
+          ...panHandlers,
+          source: imageSrc,
+          style: imageStylesWithOpacity,
+          onLoad: onLoaded,
+        })
+      ) : (
+        <Animated.Image
+          {...panHandlers}
+          source={imageSrc}
+          style={imageStylesWithOpacity}
+          onLoad={onLoaded}
+        />
+      )}
+
+      {(!isLoaded || !imageDimensions) && (
+        <ImageLoading LoaderComponent={LoaderComponent} />
+      )}
     </ScrollView>
   );
 };
