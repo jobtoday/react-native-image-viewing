@@ -6,7 +6,7 @@
  *
  */
 
-import React from "react";
+import React, { ComponentType } from "react";
 
 import { ActivityIndicator, Dimensions, StyleSheet, View } from "react-native";
 
@@ -14,9 +14,23 @@ const SCREEN = Dimensions.get("screen");
 const SCREEN_WIDTH = SCREEN.width;
 const SCREEN_HEIGHT = SCREEN.height;
 
-export const ImageLoading = () => (
+type Props = {
+  color?: string;
+  size?: number | "small" | "large";
+  LoaderComponent?: ComponentType;
+};
+
+export const ImageLoading = ({
+  color = "#FFF",
+  size = "small",
+  LoaderComponent,
+}: Props) => (
   <View style={styles.loading}>
-    <ActivityIndicator size="small" color="#FFF" />
+    {LoaderComponent ? (
+      React.createElement(LoaderComponent)
+    ) : (
+      <ActivityIndicator size={size} color={color} />
+    )}
   </View>
 );
 
