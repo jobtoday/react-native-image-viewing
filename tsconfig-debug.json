@@ -1,0 +1,7 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./../app/node_modules/react-native-image-viewing/dist",
+    "watch": true
+  }
+}
