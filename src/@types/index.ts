@@ -18,4 +18,16 @@ export type Position = {
   y: number;
 };
 
-export type ImageSource = ImageURISource | ImageRequireSource;
+type MandatoryDimensions =
+  | {
+      width: number;
+      height: number;
+    }
+  | {
+      width?: never;
+      height?: never;
+    }
+
+export type ImageSource = {
+  blurhash?: string;
+} & MandatoryDimensions & (ImageURISource | ImageRequireSource);

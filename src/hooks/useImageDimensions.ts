@@ -16,10 +16,40 @@ const CACHE_SIZE = 50;
 const imageDimensionsCache = createCache(CACHE_SIZE);
 
 const useImageDimensions = (image: ImageSource): Dimensions | null => {
-  const [dimensions, setDimensions] = useState<Dimensions | null>(null);
+  const [dimensions, setDimensions] = useState<Dimensions | null>(() => {
+    if ('uri' in image && image.uri && 'height' in image) {
+      const cacheKey = image.uri;
+
+      let imageDimensions = imageDimensionsCache.get(cacheKey);
+
+      if (imageDimensions) {
+        return imageDimensions;
+      } else {
+        imageDimensions = { width: image.width, height: image.height };
+        imageDimensionsCache.set(cacheKey, imageDimensions);
+        return imageDimensions;
+      }
+    }
+
+    return null;
+  });
 
   const getImageDimensions = (image: ImageSource): Promise<Dimensions> => {
     return new Promise((resolve) => {
+      if ('uri' in image && image.uri && 'height' in image) {
+        const cacheKey = image.uri;
+
+        let imageDimensions = imageDimensionsCache.get(cacheKey);
+
+        if (!imageDimensions) {
+          imageDimensions = { width: image.width, height: image.height };
+          imageDimensionsCache.set(cacheKey, imageDimensions);
+        }
+
+        resolve(imageDimensions);
+
+        return;
+      }
       if (typeof image == "number") {
         const cacheKey = `${image}`;
         let imageDimensions = imageDimensionsCache.get(cacheKey);
@@ -68,6 +98,8 @@ const useImageDimensions = (image: ImageSource): Dimensions | null => {
   let isImageUnmounted = false;
 
   useEffect(() => {
+    if(isImageUnmounted && !dimensions) return;
+
     getImageDimensions(image).then((dimensions) => {
       if (!isImageUnmounted) {
         setDimensions(dimensions);
@@ -77,7 +109,7 @@ const useImageDimensions = (image: ImageSource): Dimensions | null => {
     return () => {
       isImageUnmounted = true;
     };
-  }, [image]);
+  }, [image, isImageUnmounted, dimensions]);
 
   return dimensions;
 };

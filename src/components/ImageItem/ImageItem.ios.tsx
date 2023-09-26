@@ -8,6 +8,8 @@
 
 import React, { useCallback, useRef, useState } from "react";
 
+import { Image as ExpoImage } from "expo-image";
+
 import {
   Animated,
   Dimensions,
@@ -43,6 +45,8 @@ type Props = {
   swipeToCloseEnabled?: boolean;
   doubleTapToZoomEnabled?: boolean;
 };
+
+const AnimatedExpoImage = Animated.createAnimatedComponent(ExpoImage)
 
 const ImageItem = ({
   imageSrc,
@@ -142,14 +146,15 @@ const ImageItem = ({
           onScroll,
         })}
       >
-        {(!loaded || !imageDimensions) && <ImageLoading />}
+        {((!imageSrc.blurhash && !loaded) || !imageDimensions) && <ImageLoading />}
         <TouchableWithoutFeedback
           onPress={doubleTapToZoomEnabled ? handleDoubleTap : undefined}
           onLongPress={onLongPressHandler}
           delayLongPress={delayLongPress}
         >
-          <Animated.Image
+          <AnimatedExpoImage
             source={imageSrc}
+            placeholder={imageSrc.blurhash}
             style={imageStylesWithOpacity}
             onLoad={() => setLoaded(true)}
           />
