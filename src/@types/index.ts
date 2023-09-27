@@ -28,6 +28,11 @@ type MandatoryDimensions =
       height?: never;
     }
 
+export type ImageViewingRef = {
+  scrollNext: () => void;
+  scrollPrev: () => void;
+}
+
 export type ImageSource = {
   blurhash?: string;
 } & MandatoryDimensions & (ImageURISource | ImageRequireSource);

@@ -6,7 +6,16 @@
  *
  */
 
-import React, {ComponentType, useCallback, useRef, useEffect, useMemo} from "react";
+import React, {
+  ComponentType,
+  useCallback,
+  useRef,
+  useEffect,
+  useMemo,
+  FC,
+  forwardRef,
+  useImperativeHandle
+} from "react";
 import {
   Animated,
   Dimensions,
@@ -24,7 +33,7 @@ import StatusBarManager from "./components/StatusBarManager";
 import useAnimatedComponents from "./hooks/useAnimatedComponents";
 import useImageIndexChange from "./hooks/useImageIndexChange";
 import useRequestClose from "./hooks/useRequestClose";
-import { ImageSource } from "./@types";
+import {ImageSource, ImageViewingRef} from "./@types";
 
 type Props = {
   images: ImageSource[];
@@ -53,7 +62,8 @@ const DEFAULT_DELAY_LONG_PRESS = 800;
 const SCREEN = Dimensions.get("screen");
 const SCREEN_WIDTH = SCREEN.width;
 
-function ImageViewing({
+
+const ImageViewing = forwardRef<ImageViewingRef, Props>(({
   images,
   keyExtractor,
   imageIndex,
@@ -71,12 +81,29 @@ function ImageViewing({
   HeaderComponent,
   FooterComponent,
   headerAndFooterAnimation = DEFAULT_HEADER_FOOTER_ANIMATION,
-}: Props) {
+}, ref) => {
   const imageList = useRef<VirtualizedList<ImageSource>>(null);
   const [opacity, onRequestCloseEnhanced] = useRequestClose(onRequestClose);
   const [currentImageIndex, onScroll] = useImageIndexChange(imageIndex, SCREEN);
   const [headerTransform, footerTransform, barsOpacity, setBarsVisibility, toggleBarsVisible] =
     useAnimatedComponents();
+
+  useImperativeHandle(ref, () => ({
+    scrollNext: () => {
+      if(!imageList.current) return;
+      imageList.current.scrollToIndex({
+        index: currentImageIndex + 1,
+        animated: true,
+      });
+    },
+    scrollPrev: () => {
+      if(!imageList.current) return;
+      imageList.current.scrollToIndex({
+        index: currentImageIndex - 1,
+        animated: true,
+      });
+    }
+  }));
 
   const headerAnimation = useMemo(() => (
     headerAndFooterAnimation === "slide"
@@ -194,7 +221,7 @@ function ImageViewing({
       </View>
     </Modal>
   );
-}
+});
 
 const styles = StyleSheet.create({
   container: {
@@ -215,8 +242,8 @@ const styles = StyleSheet.create({
   },
 });
 
-const EnhancedImageViewing = (props: Props) => (
-  <ImageViewing key={props.imageIndex} {...props} />
-);
+const EnhancedImageViewing = forwardRef<ImageViewingRef, Props>((props: Props, ref) => (
+  <ImageViewing key={props.imageIndex} ref={ref} {...props} />
+));
 
 export default EnhancedImageViewing;
