@@ -33,7 +33,7 @@ import StatusBarManager from "./components/StatusBarManager";
 import useAnimatedComponents from "./hooks/useAnimatedComponents";
 import useImageIndexChange from "./hooks/useImageIndexChange";
 import useRequestClose from "./hooks/useRequestClose";
-import {ImageSource, ImageViewingRef} from "./@types";
+import {ImageSource} from "./@types";
 
 type Props = {
   images: ImageSource[];
@@ -62,6 +62,10 @@ const DEFAULT_DELAY_LONG_PRESS = 800;
 const SCREEN = Dimensions.get("screen");
 const SCREEN_WIDTH = SCREEN.width;
 
+type ImageViewingRef = {
+  scrollNext: () => void;
+  scrollPrev: () => void;
+}
 
 const ImageViewing = forwardRef<ImageViewingRef, Props>(({
   images,
