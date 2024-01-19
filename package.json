@@ -6,7 +6,7 @@
   "types": "dist/index.d.ts",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/jobtoday/react-native-image-viewing.git"
+    "url": "git+https://github.com/gurunathan17899/react-native-image-viewing.git"
   },
   "keywords": [
     "react",
