@@ -1,5 +1,5 @@
 {
-  "name": "react-native-image-viewing-tech2build-test",
+  "name": "react-native-image-viewing-tech2build-testing",
   "version": "0.2.3",
   "description": "React Native modal component for viewing images as a sliding gallery",
   "main": "dist/index.js",
