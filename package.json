@@ -1,12 +1,12 @@
 {
-  "name": "react-native-image-viewing",
-  "version": "0.2.2",
+  "name": "react-native-image-viewing-tech2build-testing",
+  "version": "0.2.3",
   "description": "React Native modal component for viewing images as a sliding gallery",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/jobtoday/react-native-image-viewing.git"
+    "url": "git+https://github.com/gurunathan17899/react-native-image-viewing.git"
   },
   "keywords": [
     "react",
