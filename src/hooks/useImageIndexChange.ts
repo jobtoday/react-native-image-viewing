@@ -11,7 +11,7 @@ import { NativeSyntheticEvent, NativeScrollEvent } from "react-native";
 
 import { Dimensions } from "../@types";
 
-const useImageIndexChange = (imageIndex: number, screen: Dimensions) => {
+const useImageIndexChange = (imageIndex: number, screen: Dimensions,imagesArray: any) => {
   const [currentImageIndex, setImageIndex] = useState(imageIndex);
   const onScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     const {
@@ -26,7 +26,15 @@ const useImageIndexChange = (imageIndex: number, screen: Dimensions) => {
     }
   };
 
-  return [currentImageIndex, onScroll] as const;
+  const scrollToNextImage = (imageListRef: any) => {
+        if (imageListRef) {
+            const nextIndex = currentImageIndex + 1 < imagesArray.length ? currentImageIndex + 1 : 0;
+            imageListRef.scrollToOffset({ offset: nextIndex * screen.width, animated: true });
+            setImageIndex(nextIndex);
+        }
+    };
+
+  return [currentImageIndex, onScroll,scrollToNextImage] as const;
 };
 
 export default useImageIndexChange;

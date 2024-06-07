@@ -42,6 +42,8 @@ type Props = {
   delayLongPress?: number;
   HeaderComponent?: ComponentType<{ imageIndex: number }>;
   FooterComponent?: ComponentType<{ imageIndex: number }>;
+  enableSlideShow?: boolean;
+  slideShowThreshold?: number;
 };
 
 const DEFAULT_ANIMATION_TYPE = "fade";
@@ -56,7 +58,7 @@ function ImageViewing({
   imageIndex,
   visible,
   onRequestClose,
-  onLongPress = () => {},
+  onLongPress = () => { },
   onImageIndexChange,
   animationType = DEFAULT_ANIMATION_TYPE,
   backgroundColor = DEFAULT_BG_COLOR,
@@ -66,10 +68,12 @@ function ImageViewing({
   delayLongPress = DEFAULT_DELAY_LONG_PRESS,
   HeaderComponent,
   FooterComponent,
+  enableSlideShow = false,
+  slideShowThreshold = 3000
 }: Props) {
   const imageList = useRef<VirtualizedList<ImageSource>>(null);
   const [opacity, onRequestCloseEnhanced] = useRequestClose(onRequestClose);
-  const [currentImageIndex, onScroll] = useImageIndexChange(imageIndex, SCREEN);
+  const [currentImageIndex, onScroll, scrollToNextImage] = useImageIndexChange(imageIndex, SCREEN, images);
   const [headerTransform, footerTransform, toggleBarsVisible] =
     useAnimatedComponents();
 
@@ -77,7 +81,13 @@ function ImageViewing({
     if (onImageIndexChange) {
       onImageIndexChange(currentImageIndex);
     }
-  }, [currentImageIndex]);
+    if (enableSlideShow) {
+      const interval = setInterval(() => {
+        scrollToNextImage(imageList.current);
+      }, slideShowThreshold);
+      return () => clearInterval(interval);
+    }
+  }, [currentImageIndex, enableSlideShow]);
 
   const onZoom = useCallback(
     (isScaled: boolean) => {
@@ -148,8 +158,8 @@ function ImageViewing({
             keyExtractor
               ? keyExtractor(imageSrc, index)
               : typeof imageSrc === "number"
-              ? `${imageSrc}`
-              : imageSrc.uri
+                ? `${imageSrc}`
+                : imageSrc.uri
           }
         />
         {typeof FooterComponent !== "undefined" && (
