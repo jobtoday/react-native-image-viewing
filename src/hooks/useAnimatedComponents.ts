@@ -6,7 +6,7 @@
  *
  */
 
-import { Animated } from "react-native";
+import { Animated } from 'react-native';
 
 const INITIAL_POSITION = { x: 0, y: 0 };
 const ANIMATION_CONFIG = {

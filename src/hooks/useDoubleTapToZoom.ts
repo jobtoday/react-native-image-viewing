@@ -6,33 +6,53 @@
  *
  */
 
-import React, { useCallback } from "react";
+import React, { useCallback } from 'react';
 import {
-  ScrollView,
-  NativeTouchEvent,
   NativeSyntheticEvent,
-} from "react-native";
+  NativeTouchEvent,
+  ScrollView,
+} from 'react-native';
 
-import { Dimensions } from "../@types";
+import { Dimensions } from '../@types';
 
-const DOUBLE_TAP_DELAY = 300;
 let lastTapTS: number | null = null;
+let singleTapTimeout: NodeJS.Timeout | null = null;
+
+type Props = {
+  scrollViewRef: React.RefObject<ScrollView>;
+  scaled: boolean;
+  screen: Dimensions;
+  onPress: () => void;
+  doubleTapToZoomEnabled: boolean;
+  doubleTapDelay: number;
+};
 
 /**
  * This is iOS only.
  * Same functionality for Android implemented inside usePanResponder hook.
  */
-function useDoubleTapToZoom(
-  scrollViewRef: React.RefObject<ScrollView>,
-  scaled: boolean,
-  screen: Dimensions
-) {
-  const handleDoubleTap = useCallback(
+function useDoubleTapToZoom({
+  scrollViewRef,
+  scaled,
+  screen,
+  onPress,
+  doubleTapToZoomEnabled,
+  doubleTapDelay,
+}: Props) {
+  return useCallback(
     (event: NativeSyntheticEvent<NativeTouchEvent>) => {
+      if (singleTapTimeout) {
+        clearTimeout(singleTapTimeout);
+      }
+
       const nowTS = new Date().getTime();
       const scrollResponderRef = scrollViewRef?.current?.getScrollResponder();
 
-      if (lastTapTS && nowTS - lastTapTS < DOUBLE_TAP_DELAY) {
+      if (
+        doubleTapToZoomEnabled &&
+        lastTapTS &&
+        nowTS - lastTapTS < doubleTapDelay
+      ) {
         const { pageX, pageY } = event.nativeEvent;
         let targetX = 0;
         let targetY = 0;
@@ -48,7 +68,6 @@ function useDoubleTapToZoom(
           targetHeight = screen.height / 2;
         }
 
-        // @ts-ignore
         scrollResponderRef?.scrollResponderZoomTo({
           x: targetX,
           y: targetY,
@@ -58,12 +77,11 @@ function useDoubleTapToZoom(
         });
       } else {
         lastTapTS = nowTS;
+        singleTapTimeout = setTimeout(onPress, doubleTapDelay);
       }
     },
-    [scaled]
+    [scaled, doubleTapToZoomEnabled, doubleTapDelay, onPress]
   );
-
-  return handleDoubleTap;
 }
 
 export default useDoubleTapToZoom;

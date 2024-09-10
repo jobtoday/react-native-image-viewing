@@ -6,8 +6,8 @@
  *
  */
 
-import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import React from 'react';
+import { View, Text, StyleSheet } from 'react-native';
 
 type Props = {
   imageIndex: number;
@@ -23,14 +23,14 @@ const ImageFooter = ({ imageIndex, imagesCount }: Props) => (
 const styles = StyleSheet.create({
   root: {
     height: 64,
-    backgroundColor: "#00000077",
-    alignItems: "center",
-    justifyContent: "center"
+    backgroundColor: '#00000077',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   text: {
     fontSize: 17,
-    color: "#FFF"
-  }
+    color: '#FFF',
+  },
 });
 
 export default ImageFooter;

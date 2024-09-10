@@ -6,7 +6,7 @@
  *
  */
 
-import { useState } from "react";
+import { useState } from 'react';
 
 const useRequestClose = (onRequestClose: () => void) => {
   const [opacity, setOpacity] = useState(1);

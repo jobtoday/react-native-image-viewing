@@ -8,7 +8,7 @@
     "moduleResolution": "node",
     "declaration": true,
     "outDir": "dist/",
-    "types": ["react", "react-native"],
+    "types": ["react", "react-native", "node"],
     "skipLibCheck": true
   },
   "include": ["src/**/*"]

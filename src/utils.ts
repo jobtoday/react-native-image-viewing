@@ -9,12 +9,13 @@
 import {
   Animated,
   GestureResponderEvent,
+  NativeTouchEvent,
   PanResponder,
   PanResponderGestureState,
   PanResponderInstance,
-  NativeTouchEvent,
-} from "react-native";
-import { Dimensions, Position } from "./@types";
+} from 'react-native';
+
+import { Dimensions, Position } from './@types';
 
 type CacheStorageItem = { key: string; value: any };
 
@@ -74,11 +75,13 @@ export const getImageStyles = (
     return { width: 0, height: 0 };
   }
 
-  const transform = translate.getTranslateTransform();
-
-  if (scale) {
-    transform.push({ scale }, { perspective: new Animated.Value(1000) });
-  }
+  const transform = scale
+    ? [
+        ...translate.getTranslateTransform(),
+        { scale },
+        { perspective: new Animated.Value(1000) },
+      ]
+    : translate.getTranslateTransform();
 
   return {
     width: image.width,
@@ -91,16 +94,16 @@ export const getImageTranslate = (
   image: Dimensions,
   screen: Dimensions
 ): Position => {
-  const getTranslateForAxis = (axis: "x" | "y"): number => {
-    const imageSize = axis === "x" ? image.width : image.height;
-    const screenSize = axis === "x" ? screen.width : screen.height;
+  const getTranslateForAxis = (axis: 'x' | 'y'): number => {
+    const imageSize = axis === 'x' ? image.width : image.height;
+    const screenSize = axis === 'x' ? screen.width : screen.height;
 
     return (screenSize - imageSize) / 2;
   };
 
   return {
-    x: getTranslateForAxis("x"),
-    y: getTranslateForAxis("y"),
+    x: getTranslateForAxis('x'),
+    y: getTranslateForAxis('y'),
   };
 };
 

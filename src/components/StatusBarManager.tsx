@@ -1,16 +1,12 @@
-import { useEffect } from "react";
-import {
-  Platform,
-  ModalProps,
-  StatusBar,
-} from "react-native";
+import { useEffect } from 'react';
+import { Platform, ModalProps, StatusBar } from 'react-native';
 
 const StatusBarManager = ({
   presentationStyle,
 }: {
-  presentationStyle?: ModalProps["presentationStyle"];
+  presentationStyle?: ModalProps['presentationStyle'];
 }) => {
-  if (Platform.OS === "ios" || presentationStyle !== "overFullScreen") {
+  if (Platform.OS === 'ios' || presentationStyle !== 'overFullScreen') {
     return null;
   }
 

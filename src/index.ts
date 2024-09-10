@@ -6,4 +6,4 @@
  *
  */
 
-export { default } from "./ImageViewing";
+export { default } from './ImageViewing';

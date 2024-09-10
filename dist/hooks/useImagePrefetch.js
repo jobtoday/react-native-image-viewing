@@ -5,12 +5,9 @@
  * LICENSE file in the root directory of this source tree.
  *
  */
-
-import { useEffect } from "react";
-import { Image } from "react-native";
-import { ImageSource } from "../@types";
-
-const useImagePrefetch = (images: ImageSource[]) => {
+import { useEffect } from 'react';
+import { Image } from 'react-native';
+const useImagePrefetch = (images) => {
   useEffect(() => {
     images.forEach((image) => {
       //@ts-ignore
@@ -21,5 +18,4 @@ const useImagePrefetch = (images: ImageSource[]) => {
     });
   }, []);
 };
-
 export default useImagePrefetch;

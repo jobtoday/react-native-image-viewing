@@ -6,7 +6,7 @@
  *
  */
 
-import { ImageURISource, ImageRequireSource } from "react-native";
+import { ImageURISource, ImageRequireSource } from 'react-native';
 
 export type Dimensions = {
   width: number;

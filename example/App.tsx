@@ -6,7 +6,7 @@
  *
  */
 
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import {
   Alert,
   Platform,
@@ -15,21 +15,21 @@ import {
   StyleSheet,
   Text,
   View,
-} from "react-native";
-import get from "lodash/get";
-import memoize from "lodash/memoize";
+} from 'react-native';
+import get from 'lodash/get';
+import memoize from 'lodash/memoize';
 
-import ImageViewing from "../src/ImageViewing";
-import ImageList from "./components/ImageList";
-import ImageHeader from "./components/ImageHeader";
-import ImageFooter from "./components/ImageFooter";
+import ImageViewing from '../src/ImageViewing';
+import ImageList from './components/ImageList';
+import ImageHeader from './components/ImageHeader';
+import ImageFooter from './components/ImageFooter';
 
-import { architecture } from "./data/architecture";
-import { travel } from "./data/travel";
-import { city } from "./data/city";
-import { food } from "./data/food";
+import { architecture } from './data/architecture';
+import { travel } from './data/travel';
+import { city } from './data/city';
+import { food } from './data/food';
 
-import { ImageSource } from "../src/@types";
+import { ImageSource } from '../src/@types';
 
 export default function App() {
   const [currentImageIndex, setImageIndex] = useState(0);
@@ -45,13 +45,13 @@ export default function App() {
   const onRequestClose = () => setIsVisible(false);
   const getImageSource = memoize((images): ImageSource[] =>
     images.map((image) =>
-      typeof image.original === "number"
+      typeof image.original === 'number'
         ? image.original
         : { uri: image.original as string }
     )
   );
   const onLongPress = (image) => {
-    Alert.alert("Long Pressed", image.uri);
+    Alert.alert('Long Pressed', image.uri);
   };
 
   return (
@@ -107,7 +107,7 @@ export default function App() {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: "#000",
+    backgroundColor: '#000',
     ...Platform.select({
       android: { paddingTop: StatusBar.currentHeight },
       default: null,
@@ -116,13 +116,13 @@ const styles = StyleSheet.create({
   about: {
     flex: 1,
     marginTop: -12,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   name: {
-    textAlign: "center",
+    textAlign: 'center',
     fontSize: 24,
-    fontWeight: "200",
-    color: "#FFFFFFEE",
+    fontWeight: '200',
+    color: '#FFFFFFEE',
   },
 });
