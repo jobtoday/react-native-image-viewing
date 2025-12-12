@@ -12,6 +12,7 @@ import {
   Dimensions,
   StyleSheet,
   View,
+  TouchableOpacity,
   VirtualizedList,
   ModalProps,
   Modal,
@@ -103,70 +104,83 @@ function ImageViewing({
       hardwareAccelerated
     >
       <StatusBarManager presentationStyle={presentationStyle} />
-      <View style={[styles.container, { opacity, backgroundColor }]}>
-        <Animated.View style={[styles.header, { transform: headerTransform }]}>
-          {typeof HeaderComponent !== "undefined" ? (
-            React.createElement(HeaderComponent, {
-              imageIndex: currentImageIndex,
-            })
-          ) : (
-            <ImageDefaultHeader onRequestClose={onRequestCloseEnhanced} />
-          )}
-        </Animated.View>
-        <VirtualizedList
-          ref={imageList}
-          data={images}
-          horizontal
-          pagingEnabled
-          windowSize={2}
-          initialNumToRender={1}
-          maxToRenderPerBatch={1}
-          showsHorizontalScrollIndicator={false}
-          showsVerticalScrollIndicator={false}
-          initialScrollIndex={imageIndex}
-          getItem={(_, index) => images[index]}
-          getItemCount={() => images.length}
-          getItemLayout={(_, index) => ({
-            length: SCREEN_WIDTH,
-            offset: SCREEN_WIDTH * index,
-            index,
-          })}
-          renderItem={({ item: imageSrc }) => (
-            <ImageItem
-              onZoom={onZoom}
-              imageSrc={imageSrc}
-              onRequestClose={onRequestCloseEnhanced}
-              onLongPress={onLongPress}
-              delayLongPress={delayLongPress}
-              swipeToCloseEnabled={swipeToCloseEnabled}
-              doubleTapToZoomEnabled={doubleTapToZoomEnabled}
-            />
-          )}
-          onMomentumScrollEnd={onScroll}
-          //@ts-ignore
-          keyExtractor={(imageSrc, index) =>
-            keyExtractor
-              ? keyExtractor(imageSrc, index)
-              : typeof imageSrc === "number"
-              ? `${imageSrc}`
-              : imageSrc.uri
-          }
-        />
-        {typeof FooterComponent !== "undefined" && (
+      <TouchableOpacity
+        style={[styles.backdrop, { backgroundColor }]}
+        activeOpacity={1}
+        onPress={onRequestCloseEnhanced}
+      >
+        <View style={[styles.container, { opacity }]} pointerEvents="box-none">
           <Animated.View
-            style={[styles.footer, { transform: footerTransform }]}
+            style={[styles.header, { transform: headerTransform }]}
+            pointerEvents="box-none"
           >
-            {React.createElement(FooterComponent, {
-              imageIndex: currentImageIndex,
-            })}
+            {typeof HeaderComponent !== "undefined" ? (
+              React.createElement(HeaderComponent, {
+                imageIndex: currentImageIndex,
+              })
+            ) : (
+              <ImageDefaultHeader onRequestClose={onRequestCloseEnhanced} />
+            )}
           </Animated.View>
-        )}
-      </View>
+          <VirtualizedList
+            ref={imageList}
+            data={images}
+            horizontal
+            pagingEnabled
+            windowSize={2}
+            initialNumToRender={1}
+            maxToRenderPerBatch={1}
+            showsHorizontalScrollIndicator={false}
+            showsVerticalScrollIndicator={false}
+            initialScrollIndex={imageIndex}
+            getItem={(_, index) => images[index]}
+            getItemCount={() => images.length}
+            getItemLayout={(_, index) => ({
+              length: SCREEN_WIDTH,
+              offset: SCREEN_WIDTH * index,
+              index,
+            })}
+            renderItem={({ item: imageSrc }) => (
+              <ImageItem
+                onZoom={onZoom}
+                imageSrc={imageSrc}
+                onRequestClose={onRequestCloseEnhanced}
+                onLongPress={onLongPress}
+                delayLongPress={delayLongPress}
+                swipeToCloseEnabled={swipeToCloseEnabled}
+                doubleTapToZoomEnabled={doubleTapToZoomEnabled}
+              />
+            )}
+            onMomentumScrollEnd={onScroll}
+            //@ts-ignore
+            keyExtractor={(imageSrc, index) =>
+              keyExtractor
+                ? keyExtractor(imageSrc, index)
+                : typeof imageSrc === "number"
+                ? `${imageSrc}`
+                : imageSrc.uri
+            }
+          />
+          {typeof FooterComponent !== "undefined" && (
+            <Animated.View
+              style={[styles.footer, { transform: footerTransform }]}
+              pointerEvents="box-none"
+            >
+              {React.createElement(FooterComponent, {
+                imageIndex: currentImageIndex,
+              })}
+            </Animated.View>
+          )}
+        </View>
+      </TouchableOpacity>
     </Modal>
   );
 }
 
 const styles = StyleSheet.create({
+  backdrop: {
+    flex: 1,
+  },
   container: {
     flex: 1,
     backgroundColor: "#000",
