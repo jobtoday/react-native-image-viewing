@@ -15,6 +15,7 @@ import {
   VirtualizedList,
   ModalProps,
   Modal,
+  Platform,
 } from "react-native";
 
 import ImageItem from "./components/ImageItem/ImageItem";
@@ -67,6 +68,7 @@ function ImageViewing({
   HeaderComponent,
   FooterComponent,
 }: Props) {
+  const isWeb = Platform.OS === "web";
   const imageList = useRef<VirtualizedList<ImageSource>>(null);
   const [opacity, onRequestCloseEnhanced] = useRequestClose(onRequestClose);
   const [currentImageIndex, onScroll] = useImageIndexChange(imageIndex, SCREEN);
@@ -81,8 +83,10 @@ function ImageViewing({
 
   const onZoom = useCallback(
     (isScaled: boolean) => {
-      // @ts-ignore
-      imageList?.current?.setNativeProps({ scrollEnabled: !isScaled });
+      if (Platform.OS !== "web") {
+        // @ts-ignore
+        imageList?.current?.setNativeProps({ scrollEnabled: !isScaled });
+      }
       toggleBarsVisible(!isScaled);
     },
     [imageList]
@@ -142,7 +146,8 @@ function ImageViewing({
               doubleTapToZoomEnabled={doubleTapToZoomEnabled}
             />
           )}
-          onMomentumScrollEnd={onScroll}
+          onMomentumScrollEnd={isWeb ? undefined : onScroll}
+          onScroll={isWeb ? onScroll : undefined}
           //@ts-ignore
           keyExtractor={(imageSrc, index) =>
             keyExtractor

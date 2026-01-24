@@ -7,7 +7,7 @@
  */
 
 import { useEffect, useState } from "react";
-import { Image, ImageURISource } from "react-native";
+import { Image, ImageURISource, Platform } from "react-native";
 
 import { createCache } from "../utils";
 import { Dimensions, ImageSource } from "../@types";
@@ -46,18 +46,26 @@ const useImageDimensions = (image: ImageSource): Dimensions | null => {
         if (imageDimensions) {
           resolve(imageDimensions);
         } else {
-          // @ts-ignore
-          Image.getSizeWithHeaders(
-            source.uri,
-            source.headers,
-            (width: number, height: number) => {
-              imageDimensionsCache.set(cacheKey, { width, height });
-              resolve({ width, height });
-            },
-            () => {
-              resolve({ width: 0, height: 0 });
-            }
-          );
+          if (Platform.OS !== "web") {
+            // @ts-ignore
+            Image.getSizeWithHeaders(
+              source.uri,
+              source.headers,
+              (width: number, height: number) => {
+                imageDimensionsCache.set(cacheKey, { width, height });
+                resolve({ width, height });
+              },
+              () => {
+                resolve({ width: 0, height: 0 });
+              }
+            );
+          } else {
+            Image.getSize(
+              source.uri!,
+              (width, height) => resolve({ width, height }),
+              (e) => resolve({ width: 0, height: 0 })
+            );
+          }
         }
       } else {
         resolve({ width: 0, height: 0 });

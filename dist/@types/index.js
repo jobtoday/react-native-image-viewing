@@ -5,10 +5,3 @@
  * LICENSE file in the root directory of this source tree.
  *
  */
-
-module.exports = function(api) {
-  api.cache(true);
-  return {
-    presets: ["babel-preset-expo"]
-  };
-};
