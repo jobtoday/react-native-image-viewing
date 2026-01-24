@@ -1,37 +1,26 @@
-/**
- * Copyright (c) JOB TODAY S.A. and its affiliates.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- *
- */
-
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   Alert,
   Platform,
-  SafeAreaView,
   StatusBar,
   StyleSheet,
   Text,
   View,
 } from "react-native";
+import { architecture } from "../data/architecture";
+import { ImageSource } from "../../src/@types";
+import { SafeAreaView } from "react-native-safe-area-context";
+import ImageList from "@/components/ImageList";
+import { travel } from "@/data/travel";
+import ImageViewing from "../../src/ImageViewing";
+import ImageHeader from "@/components/ImageHeader";
+import ImageFooter from "@/components/ImageFooter";
+import { food } from "@/data/food";
+import { city } from "@/data/city";
 import get from "lodash/get";
 import memoize from "lodash/memoize";
 
-import ImageViewing from "../src/ImageViewing";
-import ImageList from "./components/ImageList";
-import ImageHeader from "./components/ImageHeader";
-import ImageFooter from "./components/ImageFooter";
-
-import { architecture } from "./data/architecture";
-import { travel } from "./data/travel";
-import { city } from "./data/city";
-import { food } from "./data/food";
-
-import { ImageSource } from "../src/@types";
-
-export default function App() {
+export default function Index() {
   const [currentImageIndex, setImageIndex] = useState(0);
   const [images, setImages] = useState(architecture);
   const [isVisible, setIsVisible] = useState(false);
