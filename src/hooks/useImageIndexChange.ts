@@ -6,13 +6,24 @@
  *
  */
 
-import { useState } from "react";
+import { useLayoutEffect, useState } from "react";
 import { NativeSyntheticEvent, NativeScrollEvent } from "react-native";
 
 import { Dimensions } from "../@types";
 
-const useImageIndexChange = (imageIndex: number, screen: Dimensions) => {
+const useImageIndexChange = (
+  imageIndex: number,
+  screen: Dimensions,
+  visible: boolean
+) => {
   const [currentImageIndex, setImageIndex] = useState(imageIndex);
+
+  // ImageViewing stays mounted while hidden, so start again from imageIndex each time it opens
+  useLayoutEffect(() => {
+    if (visible) {
+      setImageIndex(imageIndex);
+    }
+  }, [visible]);
   const onScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     const {
       nativeEvent: {
