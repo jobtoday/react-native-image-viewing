@@ -69,7 +69,11 @@ function ImageViewing({
 }: Props) {
   const imageList = useRef<VirtualizedList<ImageSource>>(null);
   const [opacity, onRequestCloseEnhanced] = useRequestClose(onRequestClose);
-  const [currentImageIndex, onScroll] = useImageIndexChange(imageIndex, SCREEN);
+  const [currentImageIndex, onScroll] = useImageIndexChange(
+    imageIndex,
+    SCREEN,
+    visible
+  );
   const [headerTransform, footerTransform, toggleBarsVisible] =
     useAnimatedComponents();
 
